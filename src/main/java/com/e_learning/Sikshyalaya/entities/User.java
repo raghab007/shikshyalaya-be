@@ -1,9 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 import com.e_learning.Sikshyalaya.enums.Role;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +23,9 @@ public class User {
     private String email;
     private String password;
     private String role;
+
+    @ManyToMany
+    private List<Course> courses;
 
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
