@@ -14,13 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Course {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int courseID;
+    private Integer courseID;
     private String courseName;
     private String courseDescription;
     @ManyToMany
     private  List<User> users = new ArrayList<>();
     @OneToMany
     private  List<Section> sections = new ArrayList<>();
+
 }

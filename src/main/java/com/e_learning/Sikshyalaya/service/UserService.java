@@ -5,6 +5,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -24,5 +26,13 @@ public class UserService {
 
     public  User getByUserName(String userName) {
        return userRepository.findByUserName(userName);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public void deleteUserByUserName(String userName) {
+        userRepository.deleteById(userName);
     }
 }

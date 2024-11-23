@@ -13,14 +13,11 @@ public class PublicController {
     public PublicController(UserService userService) {
         this.userService = userService;
     }
-    @GetMapping("/health-check")
+    @GetMapping("/health")
     public String healthCheck() {
+        System.out.println("Health is o");
         return "OK";
     }
-
-
-
-
 
     @PostMapping("/signup")
     public void registerUser(@RequestBody User user) {
