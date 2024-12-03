@@ -23,7 +23,6 @@ public class UserController {
     @GetMapping("/login")
     public String login(){
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getName());
         return "OK";
     }
 

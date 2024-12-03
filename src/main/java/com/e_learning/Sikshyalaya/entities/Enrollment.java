@@ -3,20 +3,31 @@ package com.e_learning.Sikshyalaya.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Comment {
+public class Enrollment {
     @Id
-    private Long commentId;
-    private String comment;
+    private   Integer enrollmentId;
+
     @ManyToOne
-    private Lecture lecture;
+    private Course course;
+
+    @ManyToOne
+    private User user;
+
+
+    private LocalDateTime enrollmentDate = LocalDateTime.now();
+
+    
 }

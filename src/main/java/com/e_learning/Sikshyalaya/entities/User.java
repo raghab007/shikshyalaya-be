@@ -23,13 +23,17 @@ public class User {
     private String email;
     private String password;
     private String role;
+    private String contactNumber;
 
-    @ManyToMany
-    private List<Course> courses;
+    @OneToMany(mappedBy = "user")
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @OneToMany
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
+
+    @OneToOne(mappedBy = "instructor")
+    private Course course;
 }

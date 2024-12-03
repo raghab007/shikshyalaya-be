@@ -1,5 +1,4 @@
 package com.e_learning.Sikshyalaya.controllers;
-
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Section;
 import com.e_learning.Sikshyalaya.entities.User;
@@ -8,12 +7,10 @@ import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/instructor")
 public class InstructorController {
 
     private final UserService userService;
@@ -24,9 +21,27 @@ public class InstructorController {
     }
 
     @PostMapping("/course")
-    public  void addCourse(Course course){
-        courseService.saveCourse(course);
+    public  void addCourse(@RequestBody Course course){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        User user = userService.getByUserName(username);
+        if (user !=null && user.getRole().equals("INSTRUCTOR")) {
+            course.setInstructor(user);
+            courseService.saveCourse(course);
+        }else {
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
 
+
+    }
+
+    @PostMapping("/course/addsection/{courseId}")
+    public void addSection(@RequestBody Section section, @PathVariable Integer courseId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Course  course = courseService.findById(courseId);
+        course.getSections().add(section);
+        courseService.saveCourse(course);
     }
 
     @DeleteMapping("/course")

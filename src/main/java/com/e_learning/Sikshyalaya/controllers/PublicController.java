@@ -1,6 +1,8 @@
 package com.e_learning.Sikshyalaya.controllers;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,14 +15,15 @@ public class PublicController {
     public PublicController(UserService userService) {
         this.userService = userService;
     }
-    @GetMapping("/health")
-    public String healthCheck() {
-        System.out.println("Health is o");
-        return "OK";
-    }
 
     @PostMapping("/signup")
-    public void registerUser(@RequestBody User user) {
-        userService.saveUser(user);
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+       User oldUser = userService.getByUserName(user.getUserName());
+       if (oldUser!=null){
+           return new ResponseEntity<String>("false",HttpStatus.OK);
+       }else {
+           userService.saveUser(user);
+           return new ResponseEntity<String>("true",HttpStatus.CREATED);
+       }
     }
 }

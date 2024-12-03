@@ -20,9 +20,15 @@ public class Course {
     private Integer courseID;
     private String courseName;
     private String courseDescription;
-    @ManyToMany
-    private  List<User> users = new ArrayList<>();
+
+   @OneToMany(mappedBy = "course")
+   private List<Enrollment> enrollments;
+
+
     @OneToMany
     private  List<Section> sections = new ArrayList<>();
+
+    @OneToOne
+    private User instructor;
 
 }
