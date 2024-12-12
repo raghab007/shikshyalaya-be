@@ -19,7 +19,6 @@ public class AdminController {
     UserService userService;
 
     public List<Course> getAllCourses() {
-
       return  courseService.findAll();
     }
 

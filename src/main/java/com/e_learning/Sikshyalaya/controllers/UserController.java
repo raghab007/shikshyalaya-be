@@ -25,6 +25,4 @@ public class UserController {
         Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
         return "OK";
     }
-
-
 }

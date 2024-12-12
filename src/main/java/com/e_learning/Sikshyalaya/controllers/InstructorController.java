@@ -23,6 +23,7 @@ public class InstructorController {
     @PostMapping("/course")
     public  void addCourse(@RequestBody Course course){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Authentication:"+auth.getName());
         String username = auth.getName();
         User user = userService.getByUserName(username);
         if (user !=null && user.getRole().equals("INSTRUCTOR")) {
@@ -31,8 +32,6 @@ public class InstructorController {
         }else {
             throw new UsernameNotFoundException("Invalid username or password");
         }
-
-
     }
 
     @PostMapping("/course/addsection/{courseId}")

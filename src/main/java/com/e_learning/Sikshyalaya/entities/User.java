@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 import com.e_learning.Sikshyalaya.enums.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
 
-    @OneToOne(mappedBy = "instructor")
-    private Course course;
+    @OneToMany(mappedBy = "instructor")
+    private List<Course> courses;
 }
