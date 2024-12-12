@@ -4,6 +4,7 @@ package com.e_learning.Sikshyalaya.service;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -25,6 +26,7 @@ public class JWTService {
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
             SecretKey sk = keyGen.generateKey();
             secretkey = Base64.getEncoder().encodeToString(sk.getEncoded());
+            System.out.println("Secret cey"+secretkey);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -47,5 +49,13 @@ public class JWTService {
     private Key getKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretkey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String extractUserName(String token) {
+        return null;
+    }
+
+    public boolean validateToken(String token, UserDetails userDetails) {
+        return  true;
     }
 }

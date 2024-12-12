@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DemoController {
 
     @GetMapping("/demo")
-    public void getReq(HttpServletRequest request){
-        System.out.println(request.getSession().getId());
+    public String getReq(){
+      return "Ok";
     }
 }

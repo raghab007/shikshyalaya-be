@@ -14,9 +14,12 @@ import java.util.List;
 @Service
 public class UserService {
     @Autowired
-  private   AuthenticationManager authenticationManager;
+    private   AuthenticationManager authenticationManager;
 
-  private   PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private JWTService jwtService;
+
+    private   PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
    private UserRepository userRepository;
     public UserService(UserRepository userRepository) {
@@ -43,10 +46,18 @@ public class UserService {
     }
 
     public String verify(User user) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(),user.getUserName()));
-        if (authentication.isAuthenticated()){
-           return  "Login success";
-       }
-        return "Login failed";
+        try {
+            System.out.println(authenticationManager);
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
+            System.out.println(authentication);
+            if (authentication.isAuthenticated()) {
+                return jwtService.generateToken(user.getUserName());
+            }
+            return "Login failed";
+        }catch (Exception e){
+            System.out.println("exception:"+e);
+        }
+      return  "Server error";
     }
+
 }

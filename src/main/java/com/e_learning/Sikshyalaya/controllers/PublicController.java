@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/public")
+@RequestMapping()
 public class PublicController {
-    UserService userService;
+   private UserService userService;
     public PublicController(UserService userService) {
         this.userService = userService;
     }
@@ -23,8 +23,9 @@ public class PublicController {
            return new ResponseEntity<String>("true",HttpStatus.CREATED);
        }
     }
-    @PostMapping
-    public String login(User user){
+    @PostMapping("/login")
+    public String login(@RequestBody User user){
        return userService.verify(user);
+
     }
 }
