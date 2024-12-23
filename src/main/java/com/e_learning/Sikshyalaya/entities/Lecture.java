@@ -3,6 +3,7 @@ package com.e_learning.Sikshyalaya.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,4 +21,7 @@ public class Lecture {
 
     @OneToMany
     private  List<VideoFeedback> videoFeedbacks = new ArrayList<>();
+
+    @OneToOne
+    private Resource resource;
 }

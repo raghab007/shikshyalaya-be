@@ -19,14 +19,12 @@ public class AdminController {
     UserService userService;
 
     public List<Course> getAllCourses() {
-
       return  courseService.findAll();
     }
 
     public List<User> getAllUsers() {
       return   userService.findAll();
     }
-
 
     public void deleteUserByUserName(String userName) {
         userService.deleteUserByUserName(userName);

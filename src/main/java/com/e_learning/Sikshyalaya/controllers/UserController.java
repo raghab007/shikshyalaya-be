@@ -20,12 +20,9 @@ public class UserController {
         return "health is ok";
     }
 
-    @GetMapping("/login")
-    public String login(){
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getName());
-        return "OK";
-    }
-
-
+//    @GetMapping("/login")
+//    public String login(){
+//        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
+//        return "OK";
+//    }
 }

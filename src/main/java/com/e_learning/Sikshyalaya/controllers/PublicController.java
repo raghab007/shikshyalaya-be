@@ -1,26 +1,31 @@
 package com.e_learning.Sikshyalaya.controllers;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.UserService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/public")
+@RequestMapping()
 public class PublicController {
-    UserService userService;
-    public PublicController(UserService userService) {
-        this.userService = userService;
-    }
-    @GetMapping("/health")
-    public String healthCheck() {
-        System.out.println("Health is o");
-        return "OK";
-    }
+    @Autowired
+   private UserService userService;
 
     @PostMapping("/signup")
-    public void registerUser(@RequestBody User user) {
-        userService.saveUser(user);
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+       Optional<User> _oldUser_ = userService.getByUserName(user.getUserName());
+       if (_oldUser_.isEmpty()){
+           userService.saveUser(user);
+           return new ResponseEntity<String>("true",HttpStatus.CREATED);
+       }else {
+           return new ResponseEntity<String>("false",HttpStatus.OK);
+       }
+    }
+    @PostMapping("/login")
+    public String login(@RequestBody User user){
+       return userService.verify(user);
+
     }
 }
