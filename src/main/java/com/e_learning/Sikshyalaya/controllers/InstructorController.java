@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/instructor")
 public class InstructorController {
@@ -23,9 +25,9 @@ public class InstructorController {
     @PostMapping("/course")
     public  void addCourse(@RequestBody Course course){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Authentication:"+auth.getName());
         String username = auth.getName();
-        User user = userService.getByUserName(username);
+        Optional<User> user1 = userService.getByUserName(username);
+        User user = user1.get();
         if (user !=null && user.getRole().equals("INSTRUCTOR")) {
             course.setInstructor(user);
             courseService.saveCourse(course);
@@ -62,7 +64,8 @@ public class InstructorController {
     public  void updateCourse(Integer courseId,Section section){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getByUserName(username);
+        Optional<User> user1 = userService.getByUserName(username);
+        User user = user1.get();
         if (user != null) {
 
         }else {

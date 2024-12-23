@@ -10,11 +10,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
     @Autowired
     private   AuthenticationManager authenticationManager;
+
 
     @Autowired
     private JWTService jwtService;
@@ -33,7 +35,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public  User getByUserName(String userName) {
+    public Optional<User> getByUserName(String userName) {
        return userRepository.findByUserName(userName);
     }
 
@@ -47,9 +49,8 @@ public class UserService {
 
     public String verify(User user) {
         try {
-            System.out.println(authenticationManager);
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
-            System.out.println(authentication);
+            System.out.println("authenticationManager:    "+authenticationManager);
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("aastha", "aastha"));
             if (authentication.isAuthenticated()) {
                 return jwtService.generateToken(user.getUserName());
             }

@@ -26,7 +26,6 @@ public class AdminController {
       return   userService.findAll();
     }
 
-
     public void deleteUserByUserName(String userName) {
         userService.deleteUserByUserName(userName);
     }
