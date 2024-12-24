@@ -26,7 +26,6 @@ public class Enrollment {
     @ManyToOne
     private User user;
 
-
     private LocalDateTime enrollmentDate = LocalDateTime.now();
 
     
