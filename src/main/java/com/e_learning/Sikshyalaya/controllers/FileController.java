@@ -24,6 +24,7 @@ public class FileController {
        }
        try {
            String resourcePath = new File("src/main/resources/static/images").getAbsolutePath();
+           log.info(resourcePath);
            File directory = new File(resourcePath);
            if (!directory.exists()) {
                directory.mkdirs();

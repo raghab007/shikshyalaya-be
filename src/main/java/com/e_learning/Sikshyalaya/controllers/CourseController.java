@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.controllers;
 
 import com.e_learning.Sikshyalaya.dtos.CourseResponseDto;
+import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,7 @@ public class CourseController {
 
 
     @GetMapping("/courses")
-    public List<CourseResponseDto> getAllCourses(){
-        return courseService.findAll().stream().map(course->new CourseResponseDto(course.getCourseName(), course.getCourseDescription(),course.getCoursePrice()))
-                .toList();
+    public List<Course> getAllCourses(){
+        return courseService.findAll();
     }
 }
