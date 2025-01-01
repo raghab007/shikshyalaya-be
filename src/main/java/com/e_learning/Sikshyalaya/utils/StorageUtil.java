@@ -15,6 +15,8 @@ public class StorageUtil {
             return false;
         }
         String resourcePath = new File(path).getAbsolutePath();
+        log.info(resourcePath);
+        System.out.println(resourcePath);
         File filePath = new File(resourcePath);
         if(!filePath.exists()){
          filePath.mkdirs();
