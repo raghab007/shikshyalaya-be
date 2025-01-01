@@ -30,10 +30,8 @@ public class JwtFilter  extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-
-            try {
+        try {
                 if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")){
-                    response.setStatus(HttpStatus.OK.value());
                     chain.doFilter(request, response);
                     return;
                 }
@@ -48,7 +46,12 @@ public class JwtFilter  extends OncePerRequestFilter{
            if (authorizationHeader.startsWith("Bearer ")) {jwt = authorizationHeader.substring(7);
                username = jwtService.extractUserName(jwt);
                System.out.println(username);
+               if (username == null) {
+                   response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                   return;
+               }
            }
+
            if (username != null) {
                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                if (jwtService.validateToken(jwt)) {
@@ -56,15 +59,17 @@ public class JwtFilter  extends OncePerRequestFilter{
                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                    SecurityContextHolder.getContext().setAuthentication(auth);
                    chain.doFilter(request, response);
+               }else{
+                   response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
                }
            }else{
                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-               return;
-           }
 
+           }
            //chain.doFilter(request, response);
        }catch (Exception e){
-           System.out.println("Exception:"+e);
+          response.setStatus(HttpStatus.UNAUTHORIZED.value());
        }
     }
 }
