@@ -5,8 +5,7 @@ import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,18 +15,26 @@ public class AdminController {
     @Autowired
     CourseService courseService;
 
+    @Autowired
     UserService userService;
 
+
+    @GetMapping("/courses")
     public List<Course> getAllCourses() {
       return  courseService.findAll();
     }
 
+
+    @GetMapping("/users")
     public List<User> getAllUsers() {
       return   userService.findAll();
     }
 
-    public void deleteUserByUserName(String userName) {
+    @DeleteMapping("/users/{userName}")
+    public void deleteUserByUserName(@PathVariable String userName
+    ) {
         userService.deleteUserByUserName(userName);
     }
+    
 
 }

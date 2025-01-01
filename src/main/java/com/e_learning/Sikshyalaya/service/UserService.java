@@ -1,4 +1,5 @@
 package com.e_learning.Sikshyalaya.service;
+import com.e_learning.Sikshyalaya.dtos.RequestUser;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class UserService {
     @Autowired
     private JWTService jwtService;
 
-    private   PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-   private UserRepository userRepository;
+   private final UserRepository userRepository;
     public UserService(UserRepository userRepository) {
 
         this.userRepository = userRepository;
@@ -47,10 +48,9 @@ public class UserService {
         userRepository.deleteById(userName);
     }
 
-    public String verify(User user) {
+    public String verify(RequestUser user) {
         try {
-            System.out.println("authenticationManager:    "+authenticationManager);
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("aastha", "aastha"));
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
             if (authentication.isAuthenticated()) {
                 return jwtService.generateToken(user.getUserName());
             }

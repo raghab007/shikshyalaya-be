@@ -1,5 +1,5 @@
 package com.e_learning.Sikshyalaya.entities;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Course {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer courseID;
@@ -23,17 +22,14 @@ public class Course {
     private String courseDescription;
     private Integer coursePrice;
     private  String imageUrl;
-
-   @OneToMany(mappedBy = "course")
-   private List<Enrollment> enrollments;
-
-   @ManyToOne()
-   @JoinColumn(name = "category_id")
-   private  CourseCategory category;
-
+    private Integer courseDuration;
+    @OneToMany(mappedBy = "course")
+    private List<Enrollment> enrollments;
+    @ManyToOne()
+    @JoinColumn(name = "category_id")
+    private  CourseCategory category;
     @OneToMany
     private  List<Section> sections = new ArrayList<>();
-
     @ManyToOne
     private User instructor;
 
