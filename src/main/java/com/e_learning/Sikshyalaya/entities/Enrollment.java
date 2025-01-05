@@ -18,14 +18,10 @@ import java.time.LocalDateTime;
 public class Enrollment {
     @Id
     private   Integer enrollmentId;
-
     @ManyToOne
     private Course course;
-
     @ManyToOne
     private User user;
-
     private LocalDateTime enrollmentDate = LocalDateTime.now();
 
-    
 }

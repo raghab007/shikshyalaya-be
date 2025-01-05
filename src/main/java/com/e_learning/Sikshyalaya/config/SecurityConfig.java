@@ -21,22 +21,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    UserDetailsService userDetailsService;
+   private UserDetailsService userDetailsService;
 
     @Autowired
-    JwtFilter jwtFilter;
+   private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors()
+                .and()
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("login", "signup").permitAll()
+                        .requestMatchers("login", "signup","courses").permitAll()
                         .requestMatchers("/instructor/**").authenticated()
                         .requestMatchers("/demo").hasRole("INSTRUCTOR")
                         .requestMatchers("/check").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        //.requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/courses").authenticated()
+                        .requestMatchers("/user").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter,  UsernamePasswordAuthenticationFilter.class)
