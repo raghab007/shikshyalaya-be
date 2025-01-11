@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.config;
 
 import com.e_learning.Sikshyalaya.service.JWTService;
+import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 public class JwtFilter  extends OncePerRequestFilter{
@@ -29,20 +31,23 @@ public class JwtFilter  extends OncePerRequestFilter{
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-                if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses")) {
-                    chain.doFilter(request, response);
-                    return;
-                }
-                   String authorizationHeader = request.getHeader("Authorization");
-                   if (authorizationHeader==null){
-                       response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                       return;
-                   }
-                   String username = null;
-                   String jwt = null;
-                   System.out.println(authorizationHeader);
+            System.out.println(request.getRequestURI());
+          String [] strings =    request.getRequestURI().split("/");
+          String URL = request.getRequestURI();
+          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses") ||strings[1].equals("course")) {
+              chain.doFilter(request, response);
+              return;
+          }
+          String authorizationHeader = request.getHeader("Authorization");
+          if (authorizationHeader==null){
+              response.setStatus(HttpStatus.UNAUTHORIZED.value());
+              return;
+          }
+          String username = null;
+          String jwt = null;
+          System.out.println(authorizationHeader);
            if (authorizationHeader.startsWith("Bearer ")) {jwt = authorizationHeader.substring(7);
                username = jwtService.extractUserName(jwt);
                System.out.println(username);
@@ -61,11 +66,9 @@ public class JwtFilter  extends OncePerRequestFilter{
                    chain.doFilter(request, response);
                }else{
                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
                }
            }else{
                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
            }
            //chain.doFilter(request, response);
        }catch (Exception e){

@@ -2,6 +2,7 @@ package com.e_learning.Sikshyalaya.service;
 
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Section;
+import com.e_learning.Sikshyalaya.interfaces.ICourseService;
 import com.e_learning.Sikshyalaya.repositories.CourseRepository;
 import com.e_learning.Sikshyalaya.repositories.ResourceRepository;
 import com.e_learning.Sikshyalaya.repositories.SectionRepository;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CourseService {
+public class CourseService implements ICourseService {
 
     @Autowired
     private final   CourseRepository courseRepository;

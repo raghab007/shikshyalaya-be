@@ -1,10 +1,13 @@
 package com.e_learning.Sikshyalaya.controllers;
 
 import com.e_learning.Sikshyalaya.entities.Course;
+import com.e_learning.Sikshyalaya.entities.Lecture;
 import com.e_learning.Sikshyalaya.entities.Section;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.CourseService;
+import com.e_learning.Sikshyalaya.service.SectionService;
 import com.e_learning.Sikshyalaya.service.UserService;
+import com.e_learning.Sikshyalaya.utils.Constants;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,10 +17,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/instructor")
@@ -25,12 +28,15 @@ import java.util.Optional;
 public class InstructorController {
     private final UserService userService;
     private final CourseService courseService;
-    private  final String UPLOAD_DIR = "src/main/resources/static/images/course";
+   // private  final String UPLOAD_DIR = "src/main/resources/static/images/course";
     private  final StorageUtil storageUtil;
-    public InstructorController(CourseService courseService, UserService userService,StorageUtil storageUtil) {
+    private final SectionService sectionService;
+
+    public InstructorController(CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService) {
         this.courseService = courseService;
         this.userService = userService;
         this.storageUtil = storageUtil;
+        this.sectionService = sectionService;
     }
 
     @PostMapping("/course")
@@ -44,9 +50,8 @@ public class InstructorController {
         if (courseImage.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        File file = new File(UPLOAD_DIR);
+        File file = new File(Constants.CourseImagePath);
         String path = file.getAbsolutePath();
-        log.info("Path------"+path);
         File director = new File(path);
         if (!director.exists()){
             director.mkdir();
@@ -76,20 +81,34 @@ public class InstructorController {
         }
     }
 
-    @PostMapping("/course/section/{courseId}")
-    public void addSection(@RequestBody Section section, @PathVariable Integer courseId){
+    @PostMapping("/course/{courseId}/section")
+    public void addSection(@RequestBody Section section, @PathVariable Integer courseId) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
         Course  course = courseService.findById(courseId);
         course.getSections().add(section);
+        section.setCourse(course);
         courseService.saveCourse(course);
     }
 
+
+    @PostMapping("/course/section/{sectionId}/lecture")
+    public boolean addLecture(@RequestBody Lecture lecture, @PathVariable Integer sectionId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> optionalUser = userService.getByUserName(auth.getName());
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("Invalid username or password");
+        }
+        Section section = sectionService.findById(sectionId);
+        if (section!=null) {
+            section.getLectures().add(lecture);
+            return true;
+        }
+        return false;
+    }
     @DeleteMapping("/course")
     public void deleteCourse(Integer courseId){
         courseService.deleteById(courseId);
     }
-
     @PutMapping("/course/updatedetails")
     public void updateCourseDetails(Course course){
         Course oldCourse = courseService.findById(course.getCourseID());

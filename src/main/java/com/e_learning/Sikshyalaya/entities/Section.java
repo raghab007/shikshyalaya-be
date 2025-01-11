@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,7 +20,9 @@ public class Section {
     private int sectionId;
     private String name;
     private String description;
-    private String image;
     @OneToMany
     private List<Lecture> lectures = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonBackReference
+    private  Course course;
 }

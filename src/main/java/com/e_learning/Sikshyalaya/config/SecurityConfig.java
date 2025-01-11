@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .and()
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("login", "signup","courses").permitAll()
+                        .requestMatchers("login", "signup","/courses","/course/**").permitAll()
                         .requestMatchers("/instructor/**").authenticated()
                         .requestMatchers("/demo").hasRole("INSTRUCTOR")
                         .requestMatchers("/check").permitAll()

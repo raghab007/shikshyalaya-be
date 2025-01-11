@@ -1,14 +1,12 @@
 package com.e_learning.Sikshyalaya.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class VideoFeedback {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     private String videoUrl;
 
     @ManyToOne

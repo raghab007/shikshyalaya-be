@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.engine.internal.Cascade;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,9 @@ public class Course {
     @ManyToOne()
     @JoinColumn(name = "category_id")
     private  CourseCategory category;
-    @OneToMany
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonBackReference
     private  List<Section> sections = new ArrayList<>();
-
     @ManyToOne
     @JsonBackReference
     private User instructor;

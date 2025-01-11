@@ -42,6 +42,10 @@ public class SectionService {
         }
     }
 
+    public  Section findById(Integer id) {
+        return sectionRepository.findById(id).orElse(null);
+    }
+
     public  void addLecture(){
 
     }

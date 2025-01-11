@@ -1,8 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Enrollment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private   Integer enrollmentId;
     @ManyToOne
     private Course course;
