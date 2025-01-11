@@ -7,7 +7,6 @@ import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.SectionService;
 import com.e_learning.Sikshyalaya.service.UserService;
-import com.e_learning.Sikshyalaya.utils.Constants;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,7 @@ import java.util.Optional;
 public class InstructorController {
     private final UserService userService;
     private final CourseService courseService;
-   // private  final String UPLOAD_DIR = "src/main/resources/static/images/course";
+    private  final String UPLOAD_DIR = "src/main/resources/static/images/course";
     private  final StorageUtil storageUtil;
     private final SectionService sectionService;
 
@@ -50,7 +49,7 @@ public class InstructorController {
         if (courseImage.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        File file = new File(Constants.CourseImagePath);
+        File file = new File(UPLOAD_DIR);
         String path = file.getAbsolutePath();
         File director = new File(path);
         if (!director.exists()){
@@ -85,9 +84,8 @@ public class InstructorController {
     public void addSection(@RequestBody Section section, @PathVariable Integer courseId) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Course  course = courseService.findById(courseId);
-        course.getSections().add(section);
         section.setCourse(course);
-        courseService.saveCourse(course);
+        sectionService.add(section);
     }
 
 
@@ -101,6 +99,8 @@ public class InstructorController {
         Section section = sectionService.findById(sectionId);
         if (section!=null) {
             section.getLectures().add(lecture);
+            lecture.setSection(section);
+
             return true;
         }
         return false;
