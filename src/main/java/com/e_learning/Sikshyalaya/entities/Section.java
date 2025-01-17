@@ -20,9 +20,9 @@ public class Section {
     private int sectionId;
     private String name;
     private String description;
-    @OneToMany
+    @OneToMany(mappedBy = "section",cascade = CascadeType.ALL)
     private List<Lecture> lectures = new ArrayList<>();
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JsonBackReference
     private  Course course;
 }

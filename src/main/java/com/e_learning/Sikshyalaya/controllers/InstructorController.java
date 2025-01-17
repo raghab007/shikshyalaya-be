@@ -1,5 +1,4 @@
 package com.e_learning.Sikshyalaya.controllers;
-
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Lecture;
 import com.e_learning.Sikshyalaya.entities.Section;
@@ -116,7 +115,6 @@ public class InstructorController {
             oldCourse.setCourseName(course.getCourseName());
             oldCourse.setCourseDescription(course.getCourseDescription());
         }
-
     }
     @PutMapping("/course/update")
     public  void updateCourse(Integer courseId,Section section){

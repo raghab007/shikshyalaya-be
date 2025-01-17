@@ -32,7 +32,7 @@ public class Course {
     @JoinColumn(name = "category_id")
     private  CourseCategory category;
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference
     private  List<Section> sections = new ArrayList<>();
     @ManyToOne
     @JsonBackReference

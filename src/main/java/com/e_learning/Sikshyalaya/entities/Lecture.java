@@ -1,11 +1,15 @@
 package com.e_learning.Sikshyalaya.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Lecture {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +20,9 @@ public class Lecture {
     private String videoUrl;
     @OneToMany(mappedBy = "lecture")
     private List<Comment> comments = new ArrayList<>();
+
+    @ManyToOne
+    private Section section;
 
     @OneToMany
     private  List<VideoFeedback> videoFeedbacks = new ArrayList<>();
