@@ -26,14 +26,11 @@ import java.util.Optional;
 public class InstructorController {
     private final UserService userService;
     private final CourseService courseService;
-    private  final String UPLOAD_DIR = "src/main/resources/static/images/course";
-    private  final StorageUtil storageUtil;
     private final SectionService sectionService;
 
     public InstructorController(CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService) {
         this.courseService = courseService;
         this.userService = userService;
-        this.storageUtil = storageUtil;
         this.sectionService = sectionService;
     }
 
@@ -48,31 +45,22 @@ public class InstructorController {
         if (courseImage.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        File file = new File(UPLOAD_DIR);
-        String path = file.getAbsolutePath();
-        File director = new File(path);
-        if (!director.exists()){
-            director.mkdir();
-        }
-       File uploadedFile = new File(path,courseImage.getOriginalFilename());
-        courseImage.transferTo(uploadedFile);
+
        Course course = new Course();
        course.setCourseName(courseName);
        course.setCourseDescription(courseDescription);
        course.setCoursePrice(coursePrice);
        course.setCourseDuration(courseDuration);
        course.setImageUrl(courseImage.getOriginalFilename());
-
-        String username = auth.getName();
-        Optional<User> user1 = userService.getByUserName(username);
-
+       String username = auth.getName();
+       Optional<User> user1 = userService.getByUserName(username);
         if (user1.isEmpty()) {
             throw new UsernameNotFoundException("Invalid username or password");
         }
         User user = user1.get();
         if (user.getRole().equals("INSTRUCTOR")) {
             course.setInstructor(user);
-            courseService.saveCourse(course);
+            courseService.saveCourse(course,courseImage);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }else {
             throw new UsernameNotFoundException("Invalid username or password");
@@ -102,12 +90,14 @@ public class InstructorController {
 
             return true;
         }
+
         return false;
     }
     @DeleteMapping("/course")
     public void deleteCourse(Integer courseId){
         courseService.deleteById(courseId);
     }
+
     @PutMapping("/course/updatedetails")
     public void updateCourseDetails(Course course){
         Course oldCourse = courseService.findById(course.getCourseID());
