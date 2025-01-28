@@ -38,4 +38,12 @@ public class Course {
     @JsonBackReference
     private User instructor;
 
+    public  Course(RequestCourseDto courseDto){
+        courseName = courseDto.getCourseName();
+        courseDescription = courseDto.getCourseDescription();
+        coursePrice = courseDto.getCoursePrice();
+        imageUrl = courseDto.getCourseImage().getOriginalFilename();
+        courseDuration = courseDto.getCourseDuration();
+    }
+
 }

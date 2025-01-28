@@ -34,7 +34,6 @@ public class UserService implements IUserService {
 
     public  void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("USER");
         userRepository.save(user);
     }
 
@@ -56,7 +55,6 @@ public class UserService implements IUserService {
             if (authentication.isAuthenticated()) {
                 return jwtService.generateToken(user.getUserName());
             }
-            return null;
         }catch (Exception e){
             System.out.println("exception:"+e);
 

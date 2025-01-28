@@ -12,11 +12,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-    @Autowired
-    CourseService courseService;
 
-    @Autowired
-    UserService userService;
+    private final CourseService courseService;
+
+
+   private final UserService userService;
+
+   public AdminController (CourseService courseService, UserService userService){
+       this.courseService = courseService;
+       this.userService = userService;
+   }
 
 
     @GetMapping("/courses")
@@ -35,6 +40,5 @@ public class AdminController {
     ) {
         userService.deleteUserByUserName(userName);
     }
-    
 
 }

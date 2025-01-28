@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +24,7 @@ public class JwtFilter  extends OncePerRequestFilter{
 
     private final UserDetailsService userDetailsService;
 
+//    UsernamePasswordAuthenticationToken
     private final JWTService jwtService;
 
     public JwtFilter(UserDetailsService userDetailsService, JWTService jwtService) {
@@ -33,10 +35,11 @@ public class JwtFilter  extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-            System.out.println(request.getRequestURI());
+            System.out.println("URI: "+request.getRequestURI());
           String [] strings =    request.getRequestURI().split("/");
+            System.out.println(Arrays.toString(strings));
           String URL = request.getRequestURI();
-          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses") ||strings[1].equals("course")) {
+          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses") ||strings[1].equals("course")||request.getRequestURI().equals("/upload_video")||request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")) {
               chain.doFilter(request, response);
               return;
           }
@@ -64,7 +67,6 @@ public class JwtFilter  extends OncePerRequestFilter{
                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                    SecurityContextHolder.getContext().setAuthentication(auth);
                    chain.doFilter(request, response);
-                   return;
                }else{
                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                }

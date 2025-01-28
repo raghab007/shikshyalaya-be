@@ -2,6 +2,7 @@ package com.e_learning.Sikshyalaya.controllers;
 
 import com.e_learning.Sikshyalaya.dtos.RequestUser;
 import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
+import com.e_learning.Sikshyalaya.entities.TestObject;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +29,14 @@ public class PublicController {
        }
     }
     @PostMapping("/login")
-    public String login(@RequestBody RequestUser user){
-       return userService.verify(user);
+    public ResponseEntity<?> login(@RequestBody RequestUser user){
+       String response =  userService.verify(user);
+       if (response==null)
+       {
+           return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+       }
+       return  new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
     @GetMapping("/user")
@@ -46,5 +53,15 @@ public class PublicController {
         userResponseDto.setLastName(user.getLastName());
         userResponseDto.setContactNumber(user.getContactNumber());
         return userResponseDto;
+    }
+
+    @GetMapping("/testAPI")
+    public String testAPI(@ModelAttribute TestObject testObject ){
+        System.out.println(testObject);
+        if (testObject==null){
+            return  null;
+        }
+        return testObject.toString();
+
     }
 }

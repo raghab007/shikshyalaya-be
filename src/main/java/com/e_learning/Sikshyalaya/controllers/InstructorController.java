@@ -1,21 +1,18 @@
 package com.e_learning.Sikshyalaya.controllers;
-import com.e_learning.Sikshyalaya.entities.Course;
-import com.e_learning.Sikshyalaya.entities.Lecture;
-import com.e_learning.Sikshyalaya.entities.Section;
-import com.e_learning.Sikshyalaya.entities.User;
+import com.e_learning.Sikshyalaya.entities.*;
+import com.e_learning.Sikshyalaya.repositories.CategoryRepository;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.SectionService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -27,6 +24,8 @@ public class InstructorController {
     private final UserService userService;
     private final CourseService courseService;
     private final SectionService sectionService;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public InstructorController(CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService) {
         this.courseService = courseService;
@@ -36,36 +35,31 @@ public class InstructorController {
 
     @PostMapping("/course")
     public ResponseEntity<?> addCourse(
-            @RequestParam("courseName") String courseName,
-            @RequestParam("courseDescription") String courseDescription,
-            @RequestParam("coursePrice") Integer coursePrice ,
-            @RequestParam("coursePrice") Integer courseDuration,
-            @RequestParam("courseImage") MultipartFile courseImage) throws IOException {
+           @ModelAttribute RequestCourseDto courseReq
+    ) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (courseImage.isEmpty()){
+        if (courseReq.getCourseImage().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-       Course course = new Course();
-       course.setCourseName(courseName);
-       course.setCourseDescription(courseDescription);
-       course.setCoursePrice(coursePrice);
-       course.setCourseDuration(courseDuration);
-       course.setImageUrl(courseImage.getOriginalFilename());
+        Course course = new Course(courseReq);
        String username = auth.getName();
        Optional<User> user1 = userService.getByUserName(username);
         if (user1.isEmpty()) {
             throw new UsernameNotFoundException("Invalid username or password");
         }
         User user = user1.get();
-        if (user.getRole().equals("INSTRUCTOR")) {
+        if (user.getRole().equals("INSTRUCTOR"))
+        {
             course.setInstructor(user);
-            courseService.saveCourse(course,courseImage);
+            courseService.saveCourse(course, courseReq.getCourseImage());
             return new ResponseEntity<>(HttpStatus.CREATED);
-        }else {
+        }else
+        {
             throw new UsernameNotFoundException("Invalid username or password");
         }
+
     }
+
 
     @PostMapping("/course/{courseId}/section")
     public void addSection(@RequestBody Section section, @PathVariable Integer courseId) throws IOException {
@@ -74,7 +68,6 @@ public class InstructorController {
         section.setCourse(course);
         sectionService.add(section);
     }
-
 
     @PostMapping("/course/section/{sectionId}/lecture")
     public boolean addLecture(@RequestBody Lecture lecture, @PathVariable Integer sectionId){
@@ -119,5 +112,10 @@ public class InstructorController {
             throw new IllegalArgumentException("Course not found");
         }
         courseService.saveCourse(oldCourse);
+    }
+
+    public  ResponseEntity<?> addCategory (@RequestBody CourseCategory category){
+        categoryRepository.save(category);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
