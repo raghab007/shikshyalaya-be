@@ -39,7 +39,7 @@ public class JwtFilter  extends OncePerRequestFilter{
           String [] strings =    request.getRequestURI().split("/");
             System.out.println(Arrays.toString(strings));
           String URL = request.getRequestURI();
-          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses") ||strings[1].equals("course")||request.getRequestURI().equals("/upload_video")||request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")) {
+          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses") ||strings[1].equals("course")||request.getRequestURI().equals("/upload_video")||request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")||request.getRequestURI().equals("/raghab")) {
               chain.doFilter(request, response);
               return;
           }

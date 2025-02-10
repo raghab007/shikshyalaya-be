@@ -3,10 +3,13 @@ package com.e_learning.Sikshyalaya.controllers;
 
 import com.e_learning.Sikshyalaya.entities.RequestCourseDto;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
 
 @RestController
 public class DemoController {
@@ -22,9 +25,8 @@ public class DemoController {
             System.out.println("Exception:" + e);
             return "Server error";
         }
-        System.out.println(courseDto);
-        System.out.println(courseDto.getCourseImage());
-        System.out.println("Hello");
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Object credentials = authentication.getCredentials();
         return  authentication.getName();
     }
     @GetMapping("/check")

@@ -114,7 +114,9 @@ public class InstructorController {
         courseService.saveCourse(oldCourse);
     }
 
+    @PostMapping("/course/category")
     public  ResponseEntity<?> addCategory (@RequestBody CourseCategory category){
+        category.setCourseCategoryId(1);
         categoryRepository.save(category);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 @RestController
 @RequestMapping()
@@ -63,5 +67,17 @@ public class PublicController {
         }
         return testObject.toString();
 
+    }
+
+    @GetMapping("/raghab")
+    public void test(@PathVariable  MultipartFile multipartFile) throws IOException {
+        System.out.println(multipartFile);
+        File file = new File("src/main/resources/static/images").getAbsoluteFile();
+        if (!file.exists()){
+            file.mkdirs();
+        }
+        File uploadFile = new File(file,multipartFile.getOriginalFilename());
+        multipartFile.transferTo(uploadFile);
+        System.out.println(file.getPath());
     }
 }
