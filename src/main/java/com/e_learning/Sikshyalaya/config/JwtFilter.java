@@ -35,11 +35,14 @@ public class JwtFilter  extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-            System.out.println("URI: "+request.getRequestURI());
           String [] strings =    request.getRequestURI().split("/");
-            System.out.println(Arrays.toString(strings));
           String URL = request.getRequestURI();
-          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/courses") ||strings[1].equals("course")||request.getRequestURI().equals("/upload_video")||request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")||request.getRequestURI().equals("/raghab")) {
+          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")||
+                  request.getRequestURI().equals("/courses") ||strings[1].equals("course")||
+                  request.getRequestURI().equals("/upload_video")||
+                  request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")||
+                  request.getRequestURI().equals("/raghab")||
+                  request.getRequestURI().equals("/")||strings[1].equals("images")) {
               chain.doFilter(request, response);
               return;
           }
@@ -50,7 +53,6 @@ public class JwtFilter  extends OncePerRequestFilter{
           }
           String username = null;
           String jwt = null;
-          System.out.println(authorizationHeader);
            if (authorizationHeader.startsWith("Bearer ")) {jwt = authorizationHeader.substring(7);
                username = jwtService.extractUserName(jwt);
                System.out.println(username);
@@ -59,7 +61,6 @@ public class JwtFilter  extends OncePerRequestFilter{
                    return;
                }
            }
-
            if (username != null) {
                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                if (jwtService.validateToken(jwt)) {

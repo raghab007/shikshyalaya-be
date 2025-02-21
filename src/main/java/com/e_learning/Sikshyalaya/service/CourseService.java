@@ -7,13 +7,11 @@ import com.e_learning.Sikshyalaya.repositories.CourseRepository;
 import com.e_learning.Sikshyalaya.repositories.ResourceRepository;
 import com.e_learning.Sikshyalaya.repositories.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
