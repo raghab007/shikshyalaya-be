@@ -27,6 +27,7 @@ public class CourseController {
     public List<Course> getAllCourses(){
         List<Course> all = courseService.findAll();
         for (Course course:all){
+            System.out.println(course.getImageUrl());
             String imageString = "/images/course/"+course.getImageUrl();
                 course.setImageUrl(imageString);
             }
@@ -39,6 +40,4 @@ public class CourseController {
         course.setSections(sections);
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
-
-    
 }
