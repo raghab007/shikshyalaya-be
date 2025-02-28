@@ -1,4 +1,4 @@
-package com.e_learning.Sikshyalaya.entities;
+package com.e_learning.Sikshyalaya.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

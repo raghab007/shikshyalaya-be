@@ -1,4 +1,5 @@
 package com.e_learning.Sikshyalaya.controllers;
+import com.e_learning.Sikshyalaya.dtos.LoginResponse;
 import com.e_learning.Sikshyalaya.dtos.RequestUser;
 import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
 import com.e_learning.Sikshyalaya.entities.ResponseHaha;
@@ -37,7 +38,7 @@ public class PublicController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RequestUser user){
-       String response =  userService.verify(user);
+       LoginResponse response =  userService.verify(user);
        if (response==null)
        {
            return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);

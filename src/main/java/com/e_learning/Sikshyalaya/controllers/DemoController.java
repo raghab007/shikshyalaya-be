@@ -1,7 +1,7 @@
 package com.e_learning.Sikshyalaya.controllers;
 
 
-import com.e_learning.Sikshyalaya.entities.RequestCourseDto;
+import com.e_learning.Sikshyalaya.dtos.RequestCourseDto;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

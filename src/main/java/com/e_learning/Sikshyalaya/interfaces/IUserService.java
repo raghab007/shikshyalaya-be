@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.interfaces;
 
+import com.e_learning.Sikshyalaya.dtos.LoginResponse;
 import com.e_learning.Sikshyalaya.dtos.RequestUser;
 import com.e_learning.Sikshyalaya.entities.User;
 
@@ -17,7 +18,7 @@ public interface IUserService {
 
      void deleteUserByUserName(String userName) ;
 
-     String verify(RequestUser user) ;
+     LoginResponse verify(RequestUser user) ;
 }
 
 
