@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -27,6 +29,7 @@ public class InstructorController {
     private final SectionService sectionService;
     @Autowired
     private CategoryRepository categoryRepository;
+
 
     public InstructorController(CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService) {
         this.courseService = courseService;
@@ -120,5 +123,19 @@ public class InstructorController {
         category.setCourseCategoryId(1);
         categoryRepository.save(category);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/student/enrolled/{courseId}")
+    public ResponseEntity<?> getAllEnrolledStudents(@PathVariable Integer courseId){
+        Course course = courseService.findById(courseId);
+        if (course==null){
+            throw  new RuntimeException("Course not found");
+        }
+        List<Enrollment> enrollments  = course.getEnrollments();
+        List<User> enrolledUsers = new ArrayList<>();
+        for (Enrollment enrollment : enrollments) {
+            enrolledUsers.add(enrollment.getUser());
+        }
+        return  new ResponseEntity<>(enrolledUsers,HttpStatus.OK);
     }
 }

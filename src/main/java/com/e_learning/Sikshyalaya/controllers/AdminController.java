@@ -15,8 +15,7 @@ public class AdminController {
 
     private final CourseService courseService;
 
-
-   private final UserService userService;
+    private final UserService userService;
 
    public AdminController (CourseService courseService, UserService userService){
        this.courseService = courseService;

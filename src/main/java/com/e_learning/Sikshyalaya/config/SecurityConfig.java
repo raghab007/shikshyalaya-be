@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
                         .requestMatchers("/demo").hasRole("INSTRUCTOR")
+                        .requestMatchers("/enrollment/**").hasRole("USER")
                         .requestMatchers("/check").permitAll()
                         //.requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/courses").authenticated()

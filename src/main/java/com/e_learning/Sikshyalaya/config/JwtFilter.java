@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 @Component
+@Slf4j
 public class JwtFilter  extends OncePerRequestFilter{
 
     private final UserDetailsService userDetailsService;
@@ -76,6 +78,7 @@ public class JwtFilter  extends OncePerRequestFilter{
            }
            //chain.doFilter(request, response);
        }catch (Exception e){
+            log.error("Exception: {}", String.valueOf(e));
           response.setStatus(HttpStatus.UNAUTHORIZED.value());
        }
     }
