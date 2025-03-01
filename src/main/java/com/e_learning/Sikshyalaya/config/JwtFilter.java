@@ -78,6 +78,7 @@ public class JwtFilter  extends OncePerRequestFilter{
            }
            //chain.doFilter(request, response);
        }catch (Exception e){
+            System.out.println(e.getMessage());
             log.error("Exception: {}", String.valueOf(e));
           response.setStatus(HttpStatus.UNAUTHORIZED.value());
        }

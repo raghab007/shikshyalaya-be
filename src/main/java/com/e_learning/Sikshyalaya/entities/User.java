@@ -28,6 +28,7 @@ public class User {
     private String contactNumber;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
 
     @OneToMany

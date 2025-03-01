@@ -27,17 +27,19 @@ public class Course {
     private  String imageUrl;
     private Integer courseDuration;
     @OneToMany(mappedBy = "course")
-    private List<Enrollment> enrollments;
+    @JsonManagedReference
+    private List<Enrollment> enrollments = new ArrayList<>();
     @ManyToOne()
     @JoinColumn(name = "category_id")
     private  CourseCategory category;
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+
     @JsonManagedReference
     private  List<Section> sections = new ArrayList<>();
+
     @ManyToOne
     @JsonBackReference
     private User instructor;
-
     public  Course(RequestCourseDto courseDto){
         courseName = courseDto.getCourseName();
         courseDescription = courseDto.getCourseDescription();
@@ -45,5 +47,4 @@ public class Course {
         imageUrl = courseDto.getCourseImage().getOriginalFilename();
         courseDuration = courseDto.getCourseDuration();
     }
-
 }

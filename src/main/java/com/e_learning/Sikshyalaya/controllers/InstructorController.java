@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 import com.e_learning.Sikshyalaya.dtos.RequestCourseDto;
+import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
 import com.e_learning.Sikshyalaya.entities.*;
 import com.e_learning.Sikshyalaya.repositories.CategoryRepository;
 import com.e_learning.Sikshyalaya.service.CourseService;
@@ -125,16 +126,17 @@ public class InstructorController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/student/enrolled/{courseId}")
+    @GetMapping("/students/enrolled/{courseId}")
     public ResponseEntity<?> getAllEnrolledStudents(@PathVariable Integer courseId){
         Course course = courseService.findById(courseId);
         if (course==null){
             throw  new RuntimeException("Course not found");
         }
         List<Enrollment> enrollments  = course.getEnrollments();
-        List<User> enrolledUsers = new ArrayList<>();
+        List<UserResponseDto> enrolledUsers = new ArrayList<>();
         for (Enrollment enrollment : enrollments) {
-            enrolledUsers.add(enrollment.getUser());
+            UserResponseDto userResponseDto = new UserResponseDto(enrollment.getUser());
+            enrolledUsers.add(userResponseDto);
         }
         return  new ResponseEntity<>(enrolledUsers,HttpStatus.OK);
     }
