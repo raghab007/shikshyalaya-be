@@ -44,7 +44,7 @@ public class JwtFilter  extends OncePerRequestFilter{
                   request.getRequestURI().equals("/upload_video")||
                   request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")||
                   request.getRequestURI().equals("/raghab")||
-                  request.getRequestURI().equals("/")||strings[1].equals("images")) {
+                  request.getRequestURI().equals("/")||strings[1].equals("images")||request.getRequestURI().equals("/payment")) {
               chain.doFilter(request, response);
               return;
           }

@@ -42,6 +42,7 @@ public class SecurityConfig {
                         //.requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/courses").authenticated()
                         .requestMatchers("/user").authenticated()
+                        .requestMatchers("/payment").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter,  UsernamePasswordAuthenticationFilter.class)
