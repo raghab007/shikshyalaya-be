@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 
+import com.e_learning.Sikshyalaya.dtos.CourseResponseDto;
 import com.e_learning.Sikshyalaya.dtos.Transaction;
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Enrollment;
@@ -12,6 +13,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -48,5 +51,22 @@ public class UserController {
         enrollment.setCourse(course);
         enrollmentRepository.save(enrollment);
         return "OK";
+    }
+
+    @GetMapping("/enrollment")
+    public List<CourseResponseDto> getEnrolledCourseByUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
+        Optional<User> byUserName = userService.getByUserName(userName);
+        User user = byUserName.orElseThrow(()->  new RuntimeException("User not found"));
+        List<Enrollment> enrollments = user.getEnrollments();
+        for (Enrollment enrollment : enrollments) {
+            System.out.println("Username:"+enrollment.getUser().getUserName()+ "Course id:"+ enrollment.getCourse().getCourseID());
+        }
+       List<CourseResponseDto> courseResponse = new ArrayList<>();
+        for (Enrollment enrollment:enrollments){
+            courseResponse.add(new CourseResponseDto(enrollment.getCourse()));
+        }
+        return  courseResponse;
     }
 }
