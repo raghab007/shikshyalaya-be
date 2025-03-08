@@ -76,6 +76,7 @@ public class PaymentRequest {
         private String name;
         private String email;
         private String phone;
+        private String token;
 
         // Getters and Setters
         public String getName() {
@@ -84,6 +85,14 @@ public class PaymentRequest {
 
         public void setName(String name) {
             this.name = name;
+        }
+
+        public void setoken(String token){
+            this.token = token;
+        }
+
+        public String getToken(){
+           return this.token;
         }
 
         public String getEmail() {

@@ -15,6 +15,7 @@ public class UserResponseDto {
   private String lastName;
   private String email;
   private String contactNumber;
+  private String role;
 
   public UserResponseDto(User user){
     userName = user.getUserName();
@@ -22,5 +23,6 @@ public class UserResponseDto {
     lastName = user.getLastName();
     email = user.getEmail();
     contactNumber = user.getContactNumber();
+    role = user.getRole();
   }
 }

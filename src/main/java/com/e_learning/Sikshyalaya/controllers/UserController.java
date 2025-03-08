@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 
+import com.e_learning.Sikshyalaya.dtos.Transaction;
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Enrollment;
 import com.e_learning.Sikshyalaya.entities.User;
@@ -9,10 +10,7 @@ import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -22,13 +20,14 @@ import java.util.Optional;
 public class UserController {
 
 
-    private  CourseService courseService;
+    private final CourseService courseService;
 
 
-    private  UserService userService;
+    private final   UserService userService;
 
 
-    private  EnrollmentRepository enrollmentRepository;
+    private final EnrollmentRepository enrollmentRepository;
+
     public UserController (CourseService courseService, UserService userService, EnrollmentRepository enrollmentRepository){
     this.userService = userService;
     this.enrollmentRepository = enrollmentRepository;

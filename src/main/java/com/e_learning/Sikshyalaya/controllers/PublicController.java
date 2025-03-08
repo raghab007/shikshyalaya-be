@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.controllers;
 import com.e_learning.Sikshyalaya.dtos.LoginResponse;
 import com.e_learning.Sikshyalaya.dtos.RequestUser;
+import com.e_learning.Sikshyalaya.dtos.RequestUserDto;
 import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
 import com.e_learning.Sikshyalaya.entities.ResponseHaha;
 import com.e_learning.Sikshyalaya.entities.TestObject;
@@ -27,8 +28,9 @@ public class PublicController {
    private UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
-       Optional<User> _oldUser_ = userService.getByUserName(user.getUserName());
+    public ResponseEntity<?> registerUser(@RequestBody RequestUserDto userRequestDto) {
+       Optional<User> _oldUser_ = userService.getByUserName(userRequestDto.getUserName());
+        User user = new User(userRequestDto);
        if (_oldUser_.isEmpty()){
            userService.saveUser(user);
            return new ResponseEntity<String>("true",HttpStatus.CREATED);
@@ -54,12 +56,7 @@ public class PublicController {
         System.out.println("Hello -------");
         Optional< User> optionalUser = userService.getByUserName(username);
         User user = optionalUser.get();
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setUserName(user.getUserName());
-        userResponseDto.setEmail(user.getEmail());
-        userResponseDto.setFirstName(user.getFirstName());
-        userResponseDto.setLastName(user.getLastName());
-        userResponseDto.setContactNumber(user.getContactNumber());
+        UserResponseDto userResponseDto = new UserResponseDto(user);
         return userResponseDto;
     }
 

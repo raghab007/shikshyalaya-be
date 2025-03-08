@@ -26,7 +26,7 @@ public class PaymentConroller {
 
         // Create the PaymentRequest object and set values
         PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setReturnUrl("http://localhost:5173/enrolled");
+        paymentRequest.setReturnUrl("http://localhost:5173/payment");
         paymentRequest.setWebsiteUrl("https://facebook.com/");
         paymentRequest.setAmount("300000");
         paymentRequest.setPurchaseOrderId("Order01");
@@ -45,7 +45,7 @@ public class PaymentConroller {
         headers.set("Authorization","key ced20f08671f45f7aa2cbf2981a9d618");
         //
 
-        // Wrap the paymentRequest object in an HttpEntity
+        // Wrap the paymentRequest o    bject in an HttpEntity
         HttpEntity<PaymentRequest> entity = new HttpEntity<>(paymentRequest, headers);
 
         // Send the POST request and capture the response
