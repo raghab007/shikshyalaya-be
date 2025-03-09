@@ -29,11 +29,13 @@ public class Course {
     @OneToMany(mappedBy = "course")
     @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
+
     @ManyToOne()
     @JoinColumn(name = "category_id")
+    @JsonBackReference
     private  CourseCategory category;
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference
     private  List<Section> sections = new ArrayList<>();
 

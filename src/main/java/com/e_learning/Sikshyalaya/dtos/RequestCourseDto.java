@@ -12,4 +12,5 @@ public class RequestCourseDto {
    private Integer coursePrice ;
    private Integer courseDuration;
    private MultipartFile courseImage;
+   private  Integer categoryId;
 }

@@ -47,12 +47,13 @@ public class InstructorController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Course course = new Course(courseReq);
+        CourseCategory courseCategory = new CourseCategory();
+        courseCategory.setCourseCategoryId(courseReq.getCategoryId());
+        course.setCategory(courseCategory);
        String username = auth.getName();
        Optional<User> user1 = userService.getByUserName(username);
-        if (user1.isEmpty()) {
-            throw new UsernameNotFoundException("Invalid username or password");
-        }
-        User user = user1.get();
+        User user = user1.orElseThrow(() -> new RuntimeException("User not found"));
+
         if (user.getRole().equals("INSTRUCTOR"))
         {
             course.setInstructor(user);
@@ -60,9 +61,22 @@ public class InstructorController {
             return new ResponseEntity<>(HttpStatus.CREATED);
         }else
         {
-            throw new UsernameNotFoundException("Invalid username or password");
+            throw new UsernameNotFoundException("Invalid Role");
         }
 
+    }
+
+
+
+    @GetMapping("/course/{courseId}/sections")
+    public List<Section> getAllSectionsByCourse(@PathVariable Integer courseId){
+       String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> optionalUser = userService.getByUserName(name);
+       User user = optionalUser.orElseThrow(()->new RuntimeException("User not found"));
+       List<Course> courses = user.getCourses();
+        Optional<Course> first = courses.stream().filter(course -> course.getCourseID() == courseId).findFirst();
+        Course course = first.orElseThrow(() -> new RuntimeException("Course not found"));
+        return course.getSections();
     }
 
 

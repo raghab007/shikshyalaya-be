@@ -1,7 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 
 import com.e_learning.Sikshyalaya.dtos.CourseResponseDto;
-import com.e_learning.Sikshyalaya.dtos.Transaction;
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Enrollment;
 import com.e_learning.Sikshyalaya.entities.User;
@@ -12,14 +11,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
 @RestController
-@RequestMapping
 public class UserController {
 
 
@@ -43,7 +40,7 @@ public class UserController {
         Authentication authentication = context.getAuthentication();
         String userName = authentication.getName();
         Optional<User> byUserName = userService.getByUserName(userName);
-        User user = byUserName.get();
+        User user = byUserName.orElseThrow(()-> new RuntimeException("User not found"));
 
         Course course = courseService.findById(courseId);
         Enrollment enrollment = new Enrollment();
@@ -63,7 +60,7 @@ public class UserController {
         for (Enrollment enrollment : enrollments) {
             System.out.println("Username:"+enrollment.getUser().getUserName()+ "Course id:"+ enrollment.getCourse().getCourseID());
         }
-       List<CourseResponseDto> courseResponse = new ArrayList<>();
+        List<CourseResponseDto> courseResponse = new ArrayList<>();
         for (Enrollment enrollment:enrollments){
             courseResponse.add(new CourseResponseDto(enrollment.getCourse()));
         }

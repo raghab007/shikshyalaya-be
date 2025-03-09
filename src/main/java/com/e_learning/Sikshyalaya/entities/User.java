@@ -1,6 +1,5 @@
 package com.e_learning.Sikshyalaya.entities;
-import com.e_learning.Sikshyalaya.enums.Role;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.e_learning.Sikshyalaya.dtos.RequestUserDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -40,4 +39,15 @@ public class User {
     @OneToMany(mappedBy = "instructor")
     @JsonManagedReference
     private List<Course> courses;
+
+    public User (RequestUserDto requestUserDto){
+        firstName = requestUserDto.getFirstName();
+        lastName = requestUserDto.getLastName();
+        password = requestUserDto.getPassword();
+        role = requestUserDto.getRole();
+        userName = requestUserDto.getUserName();
+        contactNumber = requestUserDto.getContactNumber();
+        email = requestUserDto.getEmail();
+
+    }
 }

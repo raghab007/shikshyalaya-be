@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class CourseCategory {
 
     private String courseCategoryName;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
+    @JsonManagedReference
     private  List<Course> courses = new ArrayList<>();
 }
