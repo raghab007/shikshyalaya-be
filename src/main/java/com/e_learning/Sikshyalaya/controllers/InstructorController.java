@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 import com.e_learning.Sikshyalaya.dtos.RequestCourseDto;
+import com.e_learning.Sikshyalaya.dtos.SectionRequestDto;
 import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
 import com.e_learning.Sikshyalaya.entities.*;
 import com.e_learning.Sikshyalaya.repositories.CategoryRepository;
@@ -28,14 +29,14 @@ public class InstructorController {
     private final UserService userService;
     private final CourseService courseService;
     private final SectionService sectionService;
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
 
-    public InstructorController(CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService) {
+    public InstructorController(CategoryRepository categoryRepository,CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService) {
         this.courseService = courseService;
         this.userService = userService;
         this.sectionService = sectionService;
+        this.categoryRepository = categoryRepository;
     }
 
     @PostMapping("/course")
@@ -66,8 +67,6 @@ public class InstructorController {
 
     }
 
-
-
     @GetMapping("/course/{courseId}/sections")
     public List<Section> getAllSectionsByCourse(@PathVariable Integer courseId){
        String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -81,9 +80,12 @@ public class InstructorController {
 
 
     @PostMapping("/course/{courseId}/section")
-    public void addSection(@RequestBody Section section, @PathVariable Integer courseId) throws IOException {
+    public void addSection(@RequestBody SectionRequestDto sectionRequestDto, @PathVariable Integer courseId) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Course  course = courseService.findById(courseId);
+        Section section = new Section();
+        section.setName(sectionRequestDto.getName());
+        section.setDescription(sectionRequestDto.getDescription());
         section.setCourse(course);
         sectionService.add(section);
     }

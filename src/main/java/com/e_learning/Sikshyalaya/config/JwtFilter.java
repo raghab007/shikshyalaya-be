@@ -25,7 +25,6 @@ import java.util.Arrays;
 public class JwtFilter  extends OncePerRequestFilter{
 
     private final UserDetailsService userDetailsService;
-
 //    UsernamePasswordAuthenticationToken
     private final JWTService jwtService;
 

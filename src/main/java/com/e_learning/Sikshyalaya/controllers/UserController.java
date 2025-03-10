@@ -7,12 +7,15 @@ import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.repositories.EnrollmentRepository;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -35,19 +38,25 @@ public class UserController {
     }
 
     @PostMapping("/enrollment/{courseId}")
-    public String enrollCourse(@PathVariable Integer courseId){
+    public ResponseEntity<?> enrollCourse(@PathVariable Integer courseId){
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication authentication = context.getAuthentication();
         String userName = authentication.getName();
         Optional<User> byUserName = userService.getByUserName(userName);
         User user = byUserName.orElseThrow(()-> new RuntimeException("User not found"));
+        List<Enrollment> enrollments = enrollmentRepository.findAll();
+        Enrollment enrollment1 = enrollments.stream().filter(enrollment ->
+                Objects.equals(enrollment.getCourse().getCourseID(), courseId) && enrollment.getUser().getUserName().equals(userName)).findFirst().orElse(null);
+        if (enrollment1!=(null)){
+            return new ResponseEntity<>("Course already enrolled", HttpStatus.BAD_REQUEST);
+        }
 
         Course course = courseService.findById(courseId);
         Enrollment enrollment = new Enrollment();
         enrollment.setUser(user);
         enrollment.setCourse(course);
         enrollmentRepository.save(enrollment);
-        return "OK";
+        return  new ResponseEntity<>("Course Enrolled", HttpStatus.OK);
     }
 
     @GetMapping("/enrollment")
