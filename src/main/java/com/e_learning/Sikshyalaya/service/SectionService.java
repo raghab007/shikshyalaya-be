@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SectionService {
@@ -47,8 +48,8 @@ public class SectionService {
         }
     }
 
-    public  Section findById(Integer id) {
-        return sectionRepository.findById(id).orElse(null);
+    public Optional<Section> findById(Integer id) {
+        return sectionRepository.findById(id);
     }
 
     public  void addLecture(){

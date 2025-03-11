@@ -34,12 +34,10 @@ public class CourseService implements ICourseService {
         if (!directory.exists()) {
             System.out.println(directory.mkdirs());
         }
-
-
         if (imageFile == null || imageFile.getOriginalFilename() == null || imageFile.getOriginalFilename().isBlank()) {
             throw new IllegalArgumentException("Invalid file or filename");
         }
-        // Gettting file name
+        // Getting file name
         String originalFilename = imageFile.getOriginalFilename();
         File uploadFile = new File(directory, originalFilename);
         byte[] bytes = imageFile.getBytes();

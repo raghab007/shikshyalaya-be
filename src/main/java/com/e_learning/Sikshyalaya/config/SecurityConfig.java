@@ -35,6 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("login", "/","signup","/courses","/course/**","/upload_video","/testAPI","/course","/raghab").permitAll()
                         .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/videos/**").permitAll()
                         .requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
                         .requestMatchers("/demo").hasRole("INSTRUCTOR")
                         .requestMatchers("/enrollment/**").permitAll()

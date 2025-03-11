@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -16,8 +17,9 @@ public class Lecture {
     private Integer id;
     private String title;
     private String description;
-    private Integer year;
+    private Date uploadedDate;
     private String videoUrl;
+    private String imageUrl;
     @OneToMany(mappedBy = "lecture")
     private List<Comment> comments = new ArrayList<>();
 

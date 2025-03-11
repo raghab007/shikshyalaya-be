@@ -6,6 +6,7 @@ import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
 import com.e_learning.Sikshyalaya.entities.ResponseHaha;
 import com.e_learning.Sikshyalaya.entities.TestObject;
 import com.e_learning.Sikshyalaya.entities.User;
+import com.e_learning.Sikshyalaya.service.InstructorService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,9 @@ import java.util.Optional;
 public class PublicController {
     @Autowired
    private UserService userService;
+
+    @Autowired
+    InstructorService instructorService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody RequestUserDto userRequestDto) {
@@ -70,23 +74,9 @@ public class PublicController {
     }
 
     @GetMapping("/raghab")
-    public ResponseEntity<?> test(@PathVariable  MultipartFile multipartFile) throws IOException {
-        File file = new File("src/main/resources/static/images/course/image.png").getAbsoluteFile();
-        try (FileInputStream fis = new FileInputStream(file)) {
-            byte[] imageBytes = fis.readAllBytes(); // Reads all bytes from the image file
-            ResponseHaha responseHaha = new ResponseHaha();
-            responseHaha.bytes  =imageBytes;
-            responseHaha.name = "Raghab";
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_MIXED); // Change based on image type (JPEG, PNG, etc.)
-            // Create MultiValueMap to hold both course info (JSON) and the image
-            //MultiValueMap<String, Object> responseMap = new LinkedMultiValueMap<>();
-           // responseMap.add("courseInfo", responseHaha); // Add course information as JSON
-            //.add("courseImage", imageBytes); // Add image as a resource (will be streamed)
-            return new ResponseEntity<>(responseHaha, HttpStatus.OK);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ResponseEntity<?> test(@RequestParam MultipartFile file) throws IOException {
+        String s = instructorService.saveVideo(file);
+       return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
