@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class Section {
     private String name;
     private String description;
     @OneToMany(mappedBy = "section",cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Lecture> lectures = new ArrayList<>();
     @ManyToOne
     @JsonBackReference

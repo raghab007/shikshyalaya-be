@@ -6,9 +6,11 @@ import com.e_learning.Sikshyalaya.entities.Enrollment;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.repositories.EnrollmentRepository;
 import com.e_learning.Sikshyalaya.service.CourseService;
+import com.e_learning.Sikshyalaya.service.EnrollmentService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,15 +30,16 @@ public class UserController {
 
     private final   UserService userService;
 
-
     private final EnrollmentRepository enrollmentRepository;
 
-    public UserController (CourseService courseService, UserService userService, EnrollmentRepository enrollmentRepository){
+    private  final EnrollmentService enrollmentService;
+
+    public UserController (CourseService courseService, UserService userService, EnrollmentRepository enrollmentRepository, EnrollmentService enrollmentService){
     this.userService = userService;
     this.enrollmentRepository = enrollmentRepository;
     this.courseService = courseService;
+    this.enrollmentService = enrollmentService;
     }
-
     @PostMapping("/enrollment/{courseId}")
     public ResponseEntity<?> enrollCourse(@PathVariable Integer courseId){
         SecurityContext context = SecurityContextHolder.getContext();
@@ -75,4 +78,10 @@ public class UserController {
         }
         return  courseResponse;
     }
+
+    @PreAuthorize("@enrollmentService.isUserEnrolled(#courseId,authentication.name)")
+    @GetMapping("/enrollment/course/{courseId}")
+    public Course getCourseById(@PathVariable Integer courseId){
+        return courseService.findById(courseId);
+  }
 }

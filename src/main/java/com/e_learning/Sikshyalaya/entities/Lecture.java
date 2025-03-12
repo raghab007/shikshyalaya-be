@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Lecture {
     private List<Comment> comments = new ArrayList<>();
 
     @ManyToOne
+    @JsonBackReference
     private Section section;
 
     @OneToMany

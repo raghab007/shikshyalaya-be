@@ -118,6 +118,14 @@ public class InstructorController {
         lectureRepository.save(lecture);
        return  new ResponseEntity<>(HttpStatus.CREATED);
     }
+    @GetMapping("/course/section/{sectionId}/lecture")
+    public List<Lecture> getLecturesBySection(@PathVariable Integer sectionId){
+        Section byId = sectionService.findById(sectionId).orElseThrow(()-> new RuntimeException("Section not found"));
+        List<Lecture> lectures = byId.getLectures();
+        System.out.println(lectures);
+        return lectures;
+    }
+
     @DeleteMapping("/course")
     public void deleteCourse(Integer courseId){
         courseService.deleteById(courseId);
