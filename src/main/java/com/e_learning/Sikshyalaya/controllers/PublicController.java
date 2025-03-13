@@ -1,25 +1,21 @@
 package com.e_learning.Sikshyalaya.controllers;
+
 import com.e_learning.Sikshyalaya.dtos.LoginResponse;
 import com.e_learning.Sikshyalaya.dtos.RequestUser;
 import com.e_learning.Sikshyalaya.dtos.RequestUserDto;
 import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
-import com.e_learning.Sikshyalaya.entities.ResponseHaha;
 import com.e_learning.Sikshyalaya.entities.TestObject;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.service.InstructorService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Optional;
 @RestController
@@ -44,9 +40,11 @@ public class PublicController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RequestUser user){
        LoginResponse response =  userService.verify(user);
-       if (response==null)
+
+       if (response.getToken()==null)
        {
-           return new ResponseEntity<>(null,HttpStatus.NOT_FOUND);
+           response.setMessage("failed");
+           return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
        }
        return  new ResponseEntity<>(response, HttpStatus.OK);
 
@@ -59,8 +57,7 @@ public class PublicController {
         System.out.println("Hello -------");
         Optional< User> optionalUser = userService.getByUserName(username);
         User user = optionalUser.get();
-        UserResponseDto userResponseDto = new UserResponseDto(user);
-        return userResponseDto;
+        return new UserResponseDto(user);
     }
 
     @GetMapping("/testAPI")

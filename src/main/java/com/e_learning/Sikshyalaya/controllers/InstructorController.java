@@ -1,4 +1,5 @@
 package com.e_learning.Sikshyalaya.controllers;
+
 import com.e_learning.Sikshyalaya.dtos.LectureRequestDto;
 import com.e_learning.Sikshyalaya.dtos.RequestCourseDto;
 import com.e_learning.Sikshyalaya.dtos.SectionRequestDto;
@@ -12,15 +13,15 @@ import com.e_learning.Sikshyalaya.service.SectionService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +38,6 @@ public class InstructorController {
     private final CategoryRepository categoryRepository;
    private final InstructorService instructorService;
    private  final LectureRepository lectureRepository;
-
-
     public InstructorController(LectureRepository lectureRepository,CategoryRepository categoryRepository,CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService, InstructorService instructorService) {
         this.courseService = courseService;
         this.userService = userService;
@@ -75,6 +74,8 @@ public class InstructorController {
         }
 
     }
+
+
     @GetMapping("/course/{courseId}/sections")
     public List<Section> getAllSectionsByCourse(@PathVariable Integer courseId){
        String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -118,6 +119,8 @@ public class InstructorController {
         lectureRepository.save(lecture);
        return  new ResponseEntity<>(HttpStatus.CREATED);
     }
+
+
     @GetMapping("/course/section/{sectionId}/lecture")
     public List<Lecture> getLecturesBySection(@PathVariable Integer sectionId){
         Section byId = sectionService.findById(sectionId).orElseThrow(()-> new RuntimeException("Section not found"));
@@ -139,6 +142,7 @@ public class InstructorController {
             oldCourse.setCourseDescription(course.getCourseDescription());
         }
     }
+
     @PutMapping("/course/update")
     public  void updateCourse(Integer courseId,Section section){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -174,5 +178,18 @@ public class InstructorController {
             enrolledUsers.add(userResponseDto);
         }
         return  new ResponseEntity<>(enrolledUsers,HttpStatus.OK);
+    }
+
+
+    @GetMapping("/course")
+    public List<Course> getCoursesByInstructor(){
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        return courseService.getCourseByInstructor(name);
+    }
+
+    @PatchMapping("/course/{courseId}")
+    public String changeCourseImage(@RequestBody MultipartFile image, @PathVariable Integer courseId) throws IOException {
+        String s = instructorService.updateCourseImage(image, courseId);
+        return s;
     }
 }

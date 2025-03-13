@@ -22,8 +22,6 @@ import java.util.Optional;
 public class UserService implements IUserService {
     @Autowired
     private   AuthenticationManager authenticationManager;
-
-
     @Autowired
     private JWTService jwtService;
 
@@ -59,11 +57,11 @@ public class UserService implements IUserService {
               String token  =  jwtService.generateToken(user.getUserName());
                 Optional<User> byUserName = userRepository.findByUserName(user.getUserName());
                 User user1 = byUserName.get();
-                return new LoginResponse(token,user1.getRole());
+                return new LoginResponse(token,user1.getRole(), "success");
             }
         }catch (Exception e){
             System.out.println("exception:"+e);
-
+            return  new LoginResponse();
         }
       return  null;
     }

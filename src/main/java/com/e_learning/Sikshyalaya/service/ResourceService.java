@@ -11,6 +11,4 @@ public class ResourceService {
     public void addResource(Resource resource){
         resourceRepository.save(resource);
     }
-
-    
 }

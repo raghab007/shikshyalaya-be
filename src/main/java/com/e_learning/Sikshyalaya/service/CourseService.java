@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Service
 public class CourseService implements ICourseService {
@@ -70,6 +71,12 @@ public class CourseService implements ICourseService {
         return courseRepository.findAll();
     }
 
+    public List<Course> getCourseByInstructor(String instructorName){
+        List<Course> all = courseRepository.findAll();
+        return all.stream().filter(course -> course.getInstructor().getUserName().equals(instructorName))
+                .toList();
+
+    }
 }
 
 

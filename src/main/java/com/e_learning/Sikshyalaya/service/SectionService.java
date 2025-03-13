@@ -58,8 +58,7 @@ public class SectionService {
 
     public  List<Section> findSectionsByCourse(int course){
         List<Section> sections = sectionRepository.findAll();
-        List<Section> updatedSections  = sections.stream().filter(section -> section.getCourse().getCourseID()==course).toList();
-        return updatedSections;
+        return sections.stream().filter(section -> section.getCourse().getCourseID()==course).toList();
     }
 
 }
