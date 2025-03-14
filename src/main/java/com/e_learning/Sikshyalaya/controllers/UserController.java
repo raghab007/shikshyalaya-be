@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -87,4 +86,17 @@ public class UserController {
     public Course getCourseById(@PathVariable Integer courseId){
         return courseService.findById(courseId);
   }
+
+  @GetMapping("/enrollment/courses")
+  public List<Course> getEnrolledCourses(){
+      String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+      return enrollmentRepository.findAll().
+              stream().
+              filter(enrollment -> enrollment.getUser().getUserName().equals(userName))
+              .map(Enrollment::getCourse)
+              .toList();
+  }
+
+
+
 }

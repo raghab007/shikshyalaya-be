@@ -70,6 +70,8 @@ public class InstructorService {
                     String filePath = "src/main/resources/static/images/course";
                     File uploadFile = new File(filePath,image.getOriginalFilename()).getAbsoluteFile();
                     image.transferTo(uploadFile);
+                    course.setImageUrl(image.getOriginalFilename());
+                    courseService.saveCourse(course);
                     return "Success";
 
                 }

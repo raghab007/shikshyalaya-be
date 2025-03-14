@@ -25,6 +25,7 @@ public class CourseService implements ICourseService {
     private SectionRepository sectionRepository;
 
     private ResourceRepository resourceRepository;
+
     public CourseService(CourseRepository courseRepository){
         this.courseRepository = courseRepository;
     }
@@ -51,7 +52,7 @@ public class CourseService implements ICourseService {
 
     @Override
     public void saveCourse(Course course) {
-
+        courseRepository.save(course);
     }
     public void deleteById(Integer id){
         courseRepository.deleteById(id);
