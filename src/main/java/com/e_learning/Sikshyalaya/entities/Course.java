@@ -39,6 +39,12 @@ public class Course {
     @JsonManagedReference
     private  List<Section> sections = new ArrayList<>();
 
+
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Message> messages;
+
     @ManyToOne
     @JsonBackReference
     private User instructor;

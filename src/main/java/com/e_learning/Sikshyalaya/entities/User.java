@@ -40,7 +40,11 @@ public class User {
     @JsonManagedReference
     private List<Course> courses;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private  List<Message> messages = new ArrayList<>();
     public User (RequestUserDto requestUserDto){
+
         firstName = requestUserDto.getFirstName();
         lastName = requestUserDto.getLastName();
         password = requestUserDto.getPassword();
