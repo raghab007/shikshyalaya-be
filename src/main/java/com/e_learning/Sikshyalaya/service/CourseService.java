@@ -50,6 +50,17 @@ public class CourseService implements ICourseService {
 
     }
 
+
+    // Fetch paginated courses
+    public List<Course> findPaginatedCourses(int offset, int limit) {
+        return courseRepository.findPaginatedCourses(offset, limit);
+    }
+
+    // Get total number of courses
+    public int getTotalCourses() {
+        return courseRepository.countTotalCourses();
+    }
+
     @Override
     public void saveCourse(Course course) {
         courseRepository.save(course);

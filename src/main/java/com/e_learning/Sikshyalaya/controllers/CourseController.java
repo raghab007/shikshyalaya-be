@@ -10,9 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class CourseController {
@@ -29,14 +32,32 @@ public class CourseController {
         this.categoryRepository = categoryRepository;
     }
     @GetMapping("/courses")
-    public List<Course> getAllCourses(){
-        List<Course> all = courseService.findAll();
-        for (Course course:all){
-            System.out.println(course.getImageUrl());
-            String imageString = "/images/course/"+course.getImageUrl();
-                course.setImageUrl(imageString);
-            }
-        return all;
+    public ResponseEntity<Map<String, Object>> getAllCourses(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int limit) {
+
+        // Calculate offset based on page and limit
+        int offset = (page - 1) * limit;
+
+        // Fetch paginated courses from the service
+        List<Course> paginatedCourses = courseService.findPaginatedCourses(offset, limit);
+
+        // Update image URLs for the paginated courses
+        for (Course course : paginatedCourses) {
+            String imageString = "/images/course/" + course.getImageUrl();
+            course.setImageUrl(imageString);
+        }
+
+        // Get the total number of courses for pagination
+        int totalCourses = courseService.getTotalCourses();
+        int totalPages = (int) Math.ceil((double) totalCourses / limit);
+
+        // Prepare the response
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses", paginatedCourses);
+        response.put("totalPages", totalPages);
+
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/course/{courseID}")
     public ResponseEntity<?> getCourseById(@PathVariable int courseID){
