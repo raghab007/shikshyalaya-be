@@ -50,7 +50,6 @@ public class PaymentConroller {
         headers.set("Content-Type", "application/json");
         headers.set("Authorization","key ced20f08671f45f7aa2cbf2981a9d618");
         //
-
         // Wrap the paymentRequest object in an HttpEntity
         HttpEntity<PaymentRequest> entity = new HttpEntity<>(paymentRequest, headers);
 

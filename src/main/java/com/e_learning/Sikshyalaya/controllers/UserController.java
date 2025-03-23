@@ -58,7 +58,6 @@ public class UserController {
         if (enrollment1!=(null)){
             return new ResponseEntity<>("Course already enrolled", HttpStatus.BAD_REQUEST);
         }
-
         Course course = courseService.findById(courseId);
         Enrollment enrollment = new Enrollment();
         enrollment.setUser(user);

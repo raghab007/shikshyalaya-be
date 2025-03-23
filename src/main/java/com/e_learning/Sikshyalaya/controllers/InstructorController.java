@@ -22,10 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -55,14 +52,12 @@ public class InstructorController {
         if (courseReq.getCourseImage().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        CourseCategory courseCategory  = categoryRepository.findById(courseReq.getCategoryId()).orElseThrow(()-> new RuntimeException("Course cateogry not found"));
         Course course = new Course(courseReq);
-        CourseCategory courseCategory = new CourseCategory();
-        courseCategory.setCourseCategoryId(courseReq.getCategoryId());
         course.setCategory(courseCategory);
        String username = auth.getName();
        Optional<User> user1 = userService.getByUserName(username);
         User user = user1.orElseThrow(() -> new RuntimeException("User not found"));
-
         if (user.getRole().equals("INSTRUCTOR"))
         {
             course.setInstructor(user);
@@ -74,7 +69,6 @@ public class InstructorController {
         }
 
     }
-
 
     @GetMapping("/course/{courseId}/sections")
     public List<Section> getAllSectionsByCourse(@PathVariable Integer courseId){
@@ -181,6 +175,9 @@ public class InstructorController {
     }
 
 
+//    @GetMapping("/students/enrolled")
+//    public  ResponseEntity<?> getEnrolledStudentsByInstructor(){
+//    }
     @GetMapping("/course")
     public List<Course> getCoursesByInstructor(){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -191,5 +188,17 @@ public class InstructorController {
     public String changeCourseImage(@RequestBody MultipartFile image, @PathVariable Integer courseId) throws IOException {
         String s = instructorService.updateCourseImage(image, courseId);
         return s;
+    }
+
+
+    @GetMapping("/courses/stats")
+    public ResponseEntity<Map<String, Object>> getCoursesDetails(){
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Map<String,Object > response = new HashMap<>();
+        long totalNumberOfCoursesByInstructor = courseService.getTotalNumberOfCoursesByInstructor(userName);
+        long totalEnrolledStudentsByInstructor = courseService.getTotalEnrolledStudentsByInstructor(userName);
+        response.put("TotalCourses",totalNumberOfCoursesByInstructor);
+        response.put("TotalStudents",totalEnrolledStudentsByInstructor);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

@@ -1,18 +1,21 @@
 package com.e_learning.Sikshyalaya.service;
 
 import com.e_learning.Sikshyalaya.entities.Course;
+import com.e_learning.Sikshyalaya.entities.Enrollment;
 import com.e_learning.Sikshyalaya.entities.Section;
+import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.interfaces.ICourseService;
-import com.e_learning.Sikshyalaya.repositories.CourseRepository;
-import com.e_learning.Sikshyalaya.repositories.ResourceRepository;
-import com.e_learning.Sikshyalaya.repositories.SectionRepository;
+import com.e_learning.Sikshyalaya.repositories.*;
+import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -22,17 +25,25 @@ public class CourseService implements ICourseService {
     private final   CourseRepository courseRepository;
 
     @Autowired
+    EnrollmentRepository enrollmentRepository;
+
+    @Autowired
     private SectionRepository sectionRepository;
 
     private ResourceRepository resourceRepository;
 
-    public CourseService(CourseRepository courseRepository){
+    private UserRepository userRepository;
+
+    StorageUtil storageUtil;
+
+    public CourseService(CourseRepository courseRepository, StorageUtil storageUtil){
         this.courseRepository = courseRepository;
+        this.storageUtil = storageUtil;
     }
 
     public void saveCourse(Course course, MultipartFile imageFile) throws IOException {
         File directory = new File("src/main/resources/static/images/course").getAbsoluteFile();
-    // Create directory if it doesn't exist
+        // Create directory if it doesn't exist
         if (!directory.exists()) {
             System.out.println(directory.mkdirs());
         }
@@ -40,12 +51,13 @@ public class CourseService implements ICourseService {
             throw new IllegalArgumentException("Invalid file or filename");
         }
         // Getting file name
-        String originalFilename = imageFile.getOriginalFilename();
+        String originalFilename = storageUtil.getRandomImageUrl()+storageUtil.getFileExtenstion(imageFile.getOriginalFilename());
         File uploadFile = new File(directory, originalFilename);
         byte[] bytes = imageFile.getBytes();
         FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
         fileOutputStream.write(bytes);
         fileOutputStream.close();
+        course.setImageUrl(originalFilename);
         courseRepository.save(course);
 
     }
@@ -88,6 +100,25 @@ public class CourseService implements ICourseService {
         return all.stream().filter(course -> course.getInstructor().getUserName().equals(instructorName))
                 .toList();
 
+    }
+
+    public long getTotalNumberOfCoursesByInstructor(String instructorName){
+        List<Course> all = courseRepository.findAll();
+       long  count = all.stream().filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
+       return count;
+    }
+
+    public long getTotalEnrolledStudentsByInstructor(String instructorName){
+        return enrollmentRepository.findAll().stream().map(Enrollment::getCourse).filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
+    }
+
+
+    public HashMap<String, Integer> getNumberOfStudentsByCourse(String instructorName){
+        User user = userRepository.findByUserName(instructorName).orElseThrow(()-> new RuntimeException("User not fount"));
+        List<Course> courseList = user.getCourses();
+        Map<String,Integer> map =  new HashMap<>();
+        //courseList.forEach(course -> );
+        return null;
     }
 }
 

@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 @Service
 public class InstructorService {
@@ -68,7 +69,8 @@ public class InstructorService {
                 boolean delete = oldCourseImage.delete();
                 if (delete){
                     String filePath = "src/main/resources/static/images/course";
-                    File uploadFile = new File(filePath,image.getOriginalFilename()).getAbsoluteFile();
+                    String imageName = getRandomImageUrl()+getFileExtenstion(image.getOriginalFilename());
+                    File uploadFile = new File(filePath,imageName).getAbsoluteFile();
                     image.transferTo(uploadFile);
                     course.setImageUrl(image.getOriginalFilename());
                     courseService.saveCourse(course);
@@ -78,6 +80,14 @@ public class InstructorService {
             }
         }
         return "failed";
+    }
+    public String getFileExtenstion(String fileName){
+        int i = fileName.lastIndexOf('.');
+      return  fileName.substring(i);
+    }
+
+    public String getRandomImageUrl(){
+        return UUID.randomUUID().toString();
     }
 
 

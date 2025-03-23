@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -29,4 +30,17 @@ public class StorageUtil {
             return false;
         }
     }
+
+
+    public String getFileExtenstion(String fileName){
+        int i = fileName.lastIndexOf('.');
+        return  fileName.substring(i);
+    }
+
+    public String getRandomImageUrl(){
+        return UUID.randomUUID().toString();
+    }
+
+
+
 }
