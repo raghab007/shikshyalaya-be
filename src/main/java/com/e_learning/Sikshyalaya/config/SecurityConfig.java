@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .and()
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("login", "/","signup","/courses","/course/**","/upload_video","/testAPI","/course","/raghab").permitAll()
+                        .requestMatchers("login", "/","signup","/courses","/course/**","/upload_video","/testAPI","/course","/raghab","/messages/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/videos/**").permitAll()
                         .requestMatchers("/instructor/**").hasRole("INSTRUCTOR")

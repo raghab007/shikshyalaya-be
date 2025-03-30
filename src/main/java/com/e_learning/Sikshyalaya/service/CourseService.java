@@ -6,6 +6,7 @@ import com.e_learning.Sikshyalaya.entities.Section;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.interfaces.ICourseService;
 import com.e_learning.Sikshyalaya.repositories.*;
+import com.e_learning.Sikshyalaya.utils.Constants;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class CourseService implements ICourseService {
     }
 
     public void saveCourse(Course course, MultipartFile imageFile) throws IOException {
-        File directory = new File("src/main/resources/static/images/course").getAbsoluteFile();
+        File directory = new File(Constants.CourseImagePath).getAbsoluteFile();
         // Create directory if it doesn't exist
         if (!directory.exists()) {
             System.out.println(directory.mkdirs());
