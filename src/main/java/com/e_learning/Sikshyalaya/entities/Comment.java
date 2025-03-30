@@ -1,12 +1,14 @@
 package com.e_learning.Sikshyalaya.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Getter
@@ -15,8 +17,18 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Comment {
     @Id
-    private Long commentId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer commentId;
+
     private String comment;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     private Lecture lecture;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userName")
+    @JsonBackReference
+    private  User user;
+
+    private Date date;
 }

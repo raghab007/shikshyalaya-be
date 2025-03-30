@@ -30,8 +30,6 @@ public class User {
     @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
 
-    @OneToMany
-    private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
@@ -43,6 +41,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private  List<Message> messages = new ArrayList<>();
+
+
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private  List<Comment> comments = new ArrayList<>();
     public User (RequestUserDto requestUserDto){
 
         firstName = requestUserDto.getFirstName();

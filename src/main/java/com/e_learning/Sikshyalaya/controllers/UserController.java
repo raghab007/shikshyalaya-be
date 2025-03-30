@@ -1,12 +1,13 @@
 package com.e_learning.Sikshyalaya.controllers;
 
+import com.e_learning.Sikshyalaya.dtos.CommentRequestDto;
+import com.e_learning.Sikshyalaya.dtos.CommentResponseDto;
 import com.e_learning.Sikshyalaya.dtos.CourseResponseDto;
 import com.e_learning.Sikshyalaya.dtos.RequestMessage;
-import com.e_learning.Sikshyalaya.entities.Course;
-import com.e_learning.Sikshyalaya.entities.Enrollment;
-import com.e_learning.Sikshyalaya.entities.Message;
-import com.e_learning.Sikshyalaya.entities.User;
+import com.e_learning.Sikshyalaya.entities.*;
+import com.e_learning.Sikshyalaya.repositories.CommentRepository;
 import com.e_learning.Sikshyalaya.repositories.EnrollmentRepository;
+import com.e_learning.Sikshyalaya.repositories.LectureRepository;
 import com.e_learning.Sikshyalaya.repositories.MessageRepository;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.EnrollmentService;
@@ -36,14 +37,22 @@ public class UserController {
     private  final EnrollmentService enrollmentService;
 
 
+    private  final LectureRepository lectureRepository;
+
+    private final CommentRepository commentRepository;
+
+
     @Autowired
     private MessageRepository messageRepository;
 
-    public UserController (CourseService courseService, UserService userService, EnrollmentRepository enrollmentRepository, EnrollmentService enrollmentService){
+    public UserController (CourseService courseService, UserService userService, EnrollmentRepository enrollmentRepository,
+                           EnrollmentService enrollmentService, LectureRepository lectureRepository, CommentRepository commentRepository){
     this.userService = userService;
     this.enrollmentRepository = enrollmentRepository;
     this.courseService = courseService;
     this.enrollmentService = enrollmentService;
+    this.lectureRepository = lectureRepository;
+    this.commentRepository = commentRepository;
     }
     @PostMapping("/enrollment/{courseId}")
     public ResponseEntity<?> enrollCourse(@PathVariable Integer courseId){
@@ -112,6 +121,33 @@ public class UserController {
       message.setCourse(course);
       messageRepository.save(message);
       return "Success";
+    }
+
+
+    @PostMapping("/comment/{lectureId}")
+    public ResponseEntity<?> saveComment(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Integer lectureId){
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getByUserName(name).orElseThrow(() -> new RuntimeException("User not found"));
+
+        Lecture lecture  = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
+        System.out.println("Comment: "+ commentRequestDto.getComment());
+        Comment comment  = new Comment();
+        comment.setComment(commentRequestDto.getComment());
+        comment.setUser(user);
+        comment.setLecture(lecture);
+        comment.setDate(new Date());
+        commentRepository.save(comment);
+        return  new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @GetMapping("/comment/{lectureId}")
+    public List<CommentResponseDto> getComment(@PathVariable Integer lectureId){
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getByUserName(name).orElseThrow(() -> new RuntimeException("User not found"));
+        Lecture lecture  = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
+        List<CommentResponseDto> list = lecture.getComments().stream().map(comment -> new CommentResponseDto(comment)).toList();
+        return  list;
     }
 
 }

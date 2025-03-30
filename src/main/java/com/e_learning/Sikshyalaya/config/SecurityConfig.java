@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("login", "/","signup","/courses","/course/**","/upload_video","/testAPI","/course","/raghab","/messages/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/videos/**").permitAll()
+                        .requestMatchers("/comment/**").authenticated()
                         .requestMatchers("/instructor/**").hasRole("INSTRUCTOR")
                         .requestMatchers("/demo").hasRole("INSTRUCTOR")
                         .requestMatchers("/enrollment/**").permitAll()
