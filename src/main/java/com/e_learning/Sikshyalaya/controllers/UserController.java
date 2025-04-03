@@ -72,7 +72,7 @@ public class UserController {
         enrollment.setUser(user);
         enrollment.setCourse(course);
         enrollmentRepository.save(enrollment);
-        return  new ResponseEntity<>("Course Enrolled", HttpStatus.OK);
+        return  new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
     @GetMapping("/enrollment")

@@ -34,48 +34,39 @@ public class JwtFilter  extends OncePerRequestFilter{
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         try {
-          String [] strings =    request.getRequestURI().split("/");
-          String URL = request.getRequestURI();
-          if(request.getRequestURI().equals("/login") || request.getRequestURI().equals("/signup")|| request.getRequestURI().equals("/messages")||
-                  request.getRequestURI().equals("/courses") ||strings[1].equals("course")||
-                  strings[1].equals("messages")||
-                  request.getRequestURI().equals("/upload_video")||
-                  request.getRequestURI().equals("/testAPI") || request.getRequestURI().equals("/course")||
-                  request.getRequestURI().equals("/raghab")||
-                  request.getRequestURI().equals("/")||strings[1].equals("images")||request.getRequestURI().equals("/payment")
-          || strings[1].equals("videos")) {
-              chain.doFilter(request, response);
-              return;
-          }
           String authorizationHeader = request.getHeader("Authorization");
-          if (authorizationHeader==null){
-              response.setStatus(HttpStatus.UNAUTHORIZED.value());
-              return;
+            System.out.println("authorization header");
+            System.out.println(authorizationHeader);
+          if (authorizationHeader==null || authorizationHeader.isEmpty()){
+             chain.doFilter(request,response);
+             return;
           }
-          String username = null;
-          String jwt = null;
-           if (authorizationHeader.startsWith("Bearer ")) {jwt = authorizationHeader.substring(7);
-               username = jwtService.extractUserName(jwt);
-               System.out.println(username);
-               if (username == null) {
-                   response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                   return;
-               }
-           }
-           if (username != null) {
-               UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-               if (jwtService.validateToken(jwt)) {
-                   UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                   auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                   SecurityContextHolder.getContext().setAuthentication(auth);
-                   chain.doFilter(request, response);
-               }else{
-                   response.setStatus(HttpStatus.UNAUTHORIZED.value());
-               }
-           }else{
-               response.setStatus(HttpStatus.UNAUTHORIZED.value());
-           }
-           //chain.doFilter(request, response);
+          else {
+              String username = null;
+              String jwt = null;
+              if (authorizationHeader.startsWith("Bearer ")) {
+                  jwt = authorizationHeader.substring(7);
+                  username = jwtService.extractUserName(jwt);
+                  System.out.println(username);
+                  if (username == null) {
+                      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                      return;
+                  }
+              }
+              if (username != null) {
+                  UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                  if (jwtService.validateToken(jwt)) {
+                      UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                      auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                      SecurityContextHolder.getContext().setAuthentication(auth);
+                      chain.doFilter(request, response);
+                  } else {
+                      response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                  }
+              } else {
+                  response.setStatus(HttpStatus.UNAUTHORIZED.value());
+              }
+          }
        }catch (Exception e){
             System.out.println(e.getMessage());
             log.error("Exception: {}", String.valueOf(e));
