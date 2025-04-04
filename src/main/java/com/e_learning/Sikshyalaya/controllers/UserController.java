@@ -139,8 +139,6 @@ public class UserController {
         commentRepository.save(comment);
         return  new ResponseEntity<>(HttpStatus.OK);
     }
-
-
     @GetMapping("/comment/{lectureId}")
     public List<CommentResponseDto> getComment(@PathVariable Integer lectureId){
         String name = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -55,6 +55,7 @@ public class InstructorController {
         CourseCategory courseCategory  = categoryRepository.findById(courseReq.getCategoryId()).orElseThrow(()-> new RuntimeException("Course cateogry not found"));
         Course course = new Course(courseReq);
         course.setCategory(courseCategory);
+        course.setCourseDifficulty(courseReq.getCourseDifficulty());
        String username = auth.getName();
        Optional<User> user1 = userService.getByUserName(username);
         User user = user1.orElseThrow(() -> new RuntimeException("User not found"));

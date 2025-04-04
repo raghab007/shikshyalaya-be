@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.entities;
 import com.e_learning.Sikshyalaya.dtos.RequestUserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,7 +36,6 @@ public class User {
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "instructor")
-    @JsonManagedReference
     private List<Course> courses;
 
     @OneToMany(mappedBy = "user")
@@ -45,6 +45,7 @@ public class User {
 
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     @JsonManagedReference
     private  List<Comment> comments = new ArrayList<>();
     public User (RequestUserDto requestUserDto){

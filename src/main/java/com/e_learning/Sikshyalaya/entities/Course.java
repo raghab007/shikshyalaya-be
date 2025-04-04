@@ -1,7 +1,9 @@
 package com.e_learning.Sikshyalaya.entities;
 
 import com.e_learning.Sikshyalaya.dtos.RequestCourseDto;
+import com.e_learning.Sikshyalaya.enums.CourseDifficulty;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,8 @@ public class Course {
     @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    private CourseDifficulty courseDifficulty;
     @ManyToOne()
     @JoinColumn(name = "category_id")
     @JsonBackReference
@@ -39,14 +43,12 @@ public class Course {
     @JsonManagedReference
     private  List<Section> sections = new ArrayList<>();
 
-
-
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Message> messages;
 
     @ManyToOne
-    @JsonBackReference
+    @JsonIgnore
     private User instructor;
     public  Course(RequestCourseDto courseDto){
         courseName = courseDto.getCourseName();

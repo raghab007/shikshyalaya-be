@@ -1,5 +1,8 @@
 package com.e_learning.Sikshyalaya.dtos;
 
+import com.e_learning.Sikshyalaya.enums.CourseDifficulty;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,4 +16,5 @@ public class RequestCourseDto {
    private Integer courseDuration;
    private MultipartFile courseImage;
    private  Integer categoryId;
+   private CourseDifficulty courseDifficulty;
 }
