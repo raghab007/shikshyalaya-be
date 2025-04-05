@@ -50,6 +50,11 @@ public class Course {
     @ManyToOne
     @JsonIgnore
     private User instructor;
+
+
+    @OneToMany(mappedBy = "course")
+    @JsonManagedReference
+    private List<Payment> payments = new ArrayList<>();
     public  Course(RequestCourseDto courseDto){
         courseName = courseDto.getCourseName();
         courseDescription = courseDto.getCourseDescription();

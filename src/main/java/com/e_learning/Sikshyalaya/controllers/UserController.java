@@ -5,10 +5,7 @@ import com.e_learning.Sikshyalaya.dtos.CommentResponseDto;
 import com.e_learning.Sikshyalaya.dtos.CourseResponseDto;
 import com.e_learning.Sikshyalaya.dtos.RequestMessage;
 import com.e_learning.Sikshyalaya.entities.*;
-import com.e_learning.Sikshyalaya.repositories.CommentRepository;
-import com.e_learning.Sikshyalaya.repositories.EnrollmentRepository;
-import com.e_learning.Sikshyalaya.repositories.LectureRepository;
-import com.e_learning.Sikshyalaya.repositories.MessageRepository;
+import com.e_learning.Sikshyalaya.repositories.*;
 import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.EnrollmentService;
 import com.e_learning.Sikshyalaya.service.UserService;
@@ -41,6 +38,9 @@ public class UserController {
 
     private final CommentRepository commentRepository;
 
+    @Autowired
+    private   PaymentRepository paymentRepository;
+
 
     @Autowired
     private MessageRepository messageRepository;
@@ -72,6 +72,11 @@ public class UserController {
         enrollment.setUser(user);
         enrollment.setCourse(course);
         enrollmentRepository.save(enrollment);
+        Payment payment = new Payment();
+        payment.setCourse(course);
+        payment.setUser(user);
+        payment.setAmount(course.getCoursePrice());
+        paymentRepository.save(payment);
         return  new ResponseEntity<>("OK", HttpStatus.OK);
     }
 

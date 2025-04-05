@@ -1,9 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 
-import com.e_learning.Sikshyalaya.dtos.LectureRequestDto;
-import com.e_learning.Sikshyalaya.dtos.RequestCourseDto;
-import com.e_learning.Sikshyalaya.dtos.SectionRequestDto;
-import com.e_learning.Sikshyalaya.dtos.UserResponseDto;
+import com.e_learning.Sikshyalaya.dtos.*;
 import com.e_learning.Sikshyalaya.entities.*;
 import com.e_learning.Sikshyalaya.repositories.CategoryRepository;
 import com.e_learning.Sikshyalaya.repositories.LectureRepository;
@@ -74,12 +71,12 @@ public class InstructorController {
     @GetMapping("/course/{courseId}/sections")
     public List<Section> getAllSectionsByCourse(@PathVariable Integer courseId){
        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> optionalUser = userService.getByUserName(name);
+       Optional<User> optionalUser = userService.getByUserName(name);
        User user = optionalUser.orElseThrow(()->new RuntimeException("User not found"));
        List<Course> courses = user.getCourses();
-        Optional<Course> first = courses.stream().filter(course -> course.getCourseID() == courseId).findFirst();
-        Course course = first.orElseThrow(() -> new RuntimeException("Course not found"));
-        return course.getSections();
+       Optional<Course> first = courses.stream().filter(course -> course.getCourseID() == courseId).findFirst();
+       Course course = first.orElseThrow(() -> new RuntimeException("Course not found"));
+       return course.getSections();
     }
 
     @PostMapping("/course/{courseId}/section")
@@ -140,8 +137,7 @@ public class InstructorController {
 
     @PutMapping("/course/update")
     public  void updateCourse(Integer courseId,Section section){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username =     getUserName();
         Optional<User> user1 = userService.getByUserName(username);
         User user = user1.get();
         Course oldCourse = courseService.findById(courseId);
@@ -175,31 +171,37 @@ public class InstructorController {
         return  new ResponseEntity<>(enrolledUsers,HttpStatus.OK);
     }
 
-
 //    @GetMapping("/students/enrolled")
 //    public  ResponseEntity<?> getEnrolledStudentsByInstructor(){
 //    }
     @GetMapping("/course")
-    public List<Course> getCoursesByInstructor(){
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        return courseService.getCourseByInstructor(name);
+    public List<ViewCourseDto> getCoursesByInstructor(){
+        String name = getUserName();
+        List<ViewCourseDto> courseLists = courseService.getCourseByInstructor(name).stream().map(course -> new ViewCourseDto(course)).toList();
+        return courseLists;
     }
 
     @PatchMapping("/course/{courseId}")
     public String changeCourseImage(@RequestBody MultipartFile image, @PathVariable Integer courseId) throws IOException {
-        String s = instructorService.updateCourseImage(image, courseId);
-        return s;
+        return instructorService.updateCourseImage(image, courseId);
     }
 
 
     @GetMapping("/courses/stats")
     public ResponseEntity<Map<String, Object>> getCoursesDetails(){
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        String userName = getUserName();
         Map<String,Object > response = new HashMap<>();
         long totalNumberOfCoursesByInstructor = courseService.getTotalNumberOfCoursesByInstructor(userName);
         long totalEnrolledStudentsByInstructor = courseService.getTotalEnrolledStudentsByInstructor(userName);
+        int  totalRevenue = instructorService.totalRevenue(userName);
         response.put("TotalCourses",totalNumberOfCoursesByInstructor);
         response.put("TotalStudents",totalEnrolledStudentsByInstructor);
+        response.put("TotalRevenue",totalRevenue);
         return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+
+    public String getUserName(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

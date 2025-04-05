@@ -48,6 +48,12 @@ public class User {
     @JsonIgnore
     @JsonManagedReference
     private  List<Comment> comments = new ArrayList<>();
+
+
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Payment> payments = new ArrayList<>();
     public User (RequestUserDto requestUserDto){
 
         firstName = requestUserDto.getFirstName();
