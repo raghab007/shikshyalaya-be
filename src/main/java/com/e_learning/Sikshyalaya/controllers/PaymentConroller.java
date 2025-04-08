@@ -33,7 +33,7 @@ public class PaymentConroller {
         // Create the PaymentRequest object and set values
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setReturnUrl("http://localhost:5173/payment");
-        paymentRequest.setWebsiteUrl("https://facebook.com/");
+        paymentRequest.setWebsiteUrl("https://example.com/");
         paymentRequest.setAmount(String.valueOf(byId.getCoursePrice()*100));
         paymentRequest.setPurchaseOrderId(courseId.toString());
         paymentRequest.setPurchaseOrderName("test");

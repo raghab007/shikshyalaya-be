@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -32,8 +33,12 @@ public class Lecture {
     private Section section;
 
     @OneToMany
-
     private  List<VideoFeedback> videoFeedbacks = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "lecture")
+    @JsonIgnore
+    List<UserProgress> userProgresses = new ArrayList<>();
 
     @OneToOne
     private Resource resource;

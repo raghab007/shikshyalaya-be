@@ -1,9 +1,6 @@
 package com.e_learning.Sikshyalaya.controllers;
 
-import com.e_learning.Sikshyalaya.dtos.CommentRequestDto;
-import com.e_learning.Sikshyalaya.dtos.CommentResponseDto;
-import com.e_learning.Sikshyalaya.dtos.CourseResponseDto;
-import com.e_learning.Sikshyalaya.dtos.RequestMessage;
+import com.e_learning.Sikshyalaya.dtos.*;
 import com.e_learning.Sikshyalaya.entities.*;
 import com.e_learning.Sikshyalaya.repositories.*;
 import com.e_learning.Sikshyalaya.service.CourseService;
@@ -17,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.*;
 
 
@@ -38,6 +34,11 @@ public class UserController {
 
     private final CommentRepository commentRepository;
 
+    private  final UserProgressRepository userProgressRepository;
+
+
+    private SectionRepository sectionRepository;
+
     @Autowired
     private   PaymentRepository paymentRepository;
 
@@ -45,14 +46,22 @@ public class UserController {
     @Autowired
     private MessageRepository messageRepository;
 
-    public UserController (CourseService courseService, UserService userService, EnrollmentRepository enrollmentRepository,
-                           EnrollmentService enrollmentService, LectureRepository lectureRepository, CommentRepository commentRepository){
+    public UserController (CourseService courseService,
+                           UserService userService,
+                           EnrollmentRepository enrollmentRepository,
+                           EnrollmentService enrollmentService,
+                           LectureRepository lectureRepository,
+                           CommentRepository commentRepository,
+                           UserProgressRepository userProgressRepository,
+                           SectionRepository sectionRepository){
     this.userService = userService;
     this.enrollmentRepository = enrollmentRepository;
     this.courseService = courseService;
     this.enrollmentService = enrollmentService;
     this.lectureRepository = lectureRepository;
     this.commentRepository = commentRepository;
+    this.userProgressRepository = userProgressRepository;
+    this.sectionRepository = sectionRepository;
     }
     @PostMapping("/enrollment/{courseId}")
     public ResponseEntity<?> enrollCourse(@PathVariable Integer courseId){
@@ -87,13 +96,20 @@ public class UserController {
         Optional<User> byUserName = userService.getByUserName(userName);
         User user = byUserName.orElseThrow(()->  new RuntimeException("User not found"));
         List<Enrollment> enrollments = user.getEnrollments();
-        for (Enrollment enrollment : enrollments) {
-            System.out.println("Username:"+enrollment.getUser().getUserName()+ "Course id:"+ enrollment.getCourse().getCourseID());
-        }
         List<CourseResponseDto> courseResponse = new ArrayList<>();
+
         for (Enrollment enrollment:enrollments){
-            courseResponse.add(new CourseResponseDto(enrollment.getCourse()));
+            int totalLecture = enrollment.getCourse().getSections().stream()
+                    .mapToInt(section -> section.getLectures().size())
+                    .sum();
+            CourseResponseDto courseResponseDto = new CourseResponseDto(enrollment.getCourse());
+            courseResponseDto.setTotalLectures(totalLecture);
+           int totalFinished =  userProgressRepository.findAll().stream().filter(userProgress -> userProgress.getLecture().getSection().getCourse().getCourseID().equals(enrollment.getCourse().getCourseID())).toList().size();
+           courseResponseDto.setTotalFinished(totalFinished);
+           courseResponseDto.setPercentageFinished(((double) totalFinished /totalLecture)*100);
+            courseResponse.add(courseResponseDto);
         }
+
         return  courseResponse;
     }
 
@@ -151,6 +167,53 @@ public class UserController {
         Lecture lecture  = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
         List<CommentResponseDto> list = lecture.getComments().stream().map(comment -> new CommentResponseDto(comment)).toList();
         return  list;
+    }
+
+
+    @PostMapping("/progress/{lectureId}")
+    public ResponseEntity<?> trackProgress(@PathVariable Integer lectureId){
+        String userName = getUserName();
+        User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
+        UserProgress userProgress = new UserProgress();
+        userProgress.setUser(user);
+        userProgress.setLecture(lecture);
+        userProgressRepository.save(userProgress);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    public String getUserName(){
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+
+    @GetMapping("/sections/{sectionId}/lectures")
+    public List<LectureReponseDto> getLectures(@PathVariable Integer sectionId) {
+        Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new RuntimeException("Section not found"));
+        String userName = getUserName();
+        List<UserProgress> userProgresses = userProgressRepository.findAll();
+        List<LectureReponseDto> reponseDtoList = new ArrayList<>();
+        for (Lecture lecture : section.getLectures()) {
+            LectureReponseDto lectureReponseDto = new LectureReponseDto(lecture);
+            boolean isCompleted = userProgresses.stream().anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lecture.getId()));
+            lectureReponseDto.setCompleted(isCompleted);
+            reponseDtoList.add(lectureReponseDto);
+        }
+
+        return  reponseDtoList;
+    }
+
+    @PostMapping("/lectures/{lectureId}/markcompleted")
+    public ResponseEntity<?> markLectureAsCompleted(@PathVariable Integer lectureId){
+        String userName = getUserName();
+        User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
+        UserProgress userProgress = new UserProgress();
+        userProgress.setLecture(lecture);
+        userProgress.setUser(user);
+        userProgressRepository.save(userProgress);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
 }

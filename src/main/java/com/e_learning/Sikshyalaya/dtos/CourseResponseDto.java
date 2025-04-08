@@ -23,4 +23,9 @@ public class CourseResponseDto {
         courseId = course.getCourseID();
 
     }
+    private  Integer totalLectures;
+
+    private  Integer totalFinished;
+
+    private  double percentageFinished;
 }

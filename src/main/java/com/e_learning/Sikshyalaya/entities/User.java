@@ -51,6 +51,12 @@ public class User {
 
 
 
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<UserProgress> userProgresses = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Payment> payments = new ArrayList<>();
