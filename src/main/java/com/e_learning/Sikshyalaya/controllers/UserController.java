@@ -39,6 +39,8 @@ public class UserController {
 
     private SectionRepository sectionRepository;
 
+    private  CommentReplyRepository commentReplyRepository;
+
     @Autowired
     private   PaymentRepository paymentRepository;
 
@@ -53,7 +55,8 @@ public class UserController {
                            LectureRepository lectureRepository,
                            CommentRepository commentRepository,
                            UserProgressRepository userProgressRepository,
-                           SectionRepository sectionRepository){
+                           SectionRepository sectionRepository,
+                           CommentReplyRepository commentReplyRepository){
     this.userService = userService;
     this.enrollmentRepository = enrollmentRepository;
     this.courseService = courseService;
@@ -62,6 +65,7 @@ public class UserController {
     this.commentRepository = commentRepository;
     this.userProgressRepository = userProgressRepository;
     this.sectionRepository = sectionRepository;
+    this.commentReplyRepository= commentReplyRepository;
     }
     @PostMapping("/enrollment/{courseId}")
     public ResponseEntity<?> enrollCourse(@PathVariable Integer courseId){
@@ -165,8 +169,17 @@ public class UserController {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getByUserName(name).orElseThrow(() -> new RuntimeException("User not found"));
         Lecture lecture  = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
-        List<CommentResponseDto> list = lecture.getComments().stream().map(comment -> new CommentResponseDto(comment)).toList();
-        return  list;
+        List<Comment> comments =  lecture.getComments();
+        List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
+        for (Comment comment:comments){
+            CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
+            List<CommentReplyResponseDto> list = comment.getCommentReplies().stream().map(commentReply -> new CommentReplyResponseDto(commentReply)).toList();
+            commentResponseDto.setCommentReplies(list);
+            commentResponseDtos.add(commentResponseDto);
+
+        }
+
+        return  commentResponseDtos;
     }
 
 
@@ -196,6 +209,7 @@ public class UserController {
         for (Lecture lecture : section.getLectures()) {
             LectureReponseDto lectureReponseDto = new LectureReponseDto(lecture);
             boolean isCompleted = userProgresses.stream().anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lecture.getId()));
+            System.out.println(isCompleted);
             lectureReponseDto.setCompleted(isCompleted);
             reponseDtoList.add(lectureReponseDto);
         }
@@ -204,16 +218,33 @@ public class UserController {
     }
 
     @PostMapping("/lectures/{lectureId}/markcompleted")
-    public ResponseEntity<?> markLectureAsCompleted(@PathVariable Integer lectureId){
+    public ResponseEntity<?> markLectureAsCompleted(@PathVariable Integer lectureId) {
         String userName = getUserName();
         User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
+        boolean b = userProgressRepository.findAll().stream().anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lectureId));
+        if (b){
+            throw  new RuntimeException("User already completed that course");
+        }
         UserProgress userProgress = new UserProgress();
         userProgress.setLecture(lecture);
         userProgress.setUser(user);
         userProgressRepository.save(userProgress);
         return new ResponseEntity<>(HttpStatus.OK);
 
+    }
+    @PostMapping("/comments/{commentId}/reply")
+    public  ResponseEntity<?> doCommentReply(@PathVariable Integer commentId, @RequestBody CommentReplyRequestDto commentReplyRequestDto){
+        String userName = getUserName();
+        User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(()-> new RuntimeException("Comment not found"));
+        CommentReply commentReply = new CommentReply();
+        commentReply.setReply(commentReplyRequestDto.getReply());
+        commentReply.setDate(new Date());
+        commentReply.setUser(user);
+        commentReply.setComment(comment);
+        commentReplyRepository.save(commentReply);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
