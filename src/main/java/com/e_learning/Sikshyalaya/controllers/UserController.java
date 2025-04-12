@@ -48,15 +48,16 @@ public class UserController {
     @Autowired
     private MessageRepository messageRepository;
 
-    public UserController (CourseService courseService,
-                           UserService userService,
-                           EnrollmentRepository enrollmentRepository,
-                           EnrollmentService enrollmentService,
-                           LectureRepository lectureRepository,
-                           CommentRepository commentRepository,
-                           UserProgressRepository userProgressRepository,
-                           SectionRepository sectionRepository,
-                           CommentReplyRepository commentReplyRepository){
+    public UserController (
+            CourseService courseService,
+            UserService userService,
+            EnrollmentRepository enrollmentRepository,
+            EnrollmentService enrollmentService,
+            LectureRepository lectureRepository,
+            CommentRepository commentRepository,
+            UserProgressRepository userProgressRepository,
+            SectionRepository sectionRepository,
+            CommentReplyRepository commentReplyRepository){
     this.userService = userService;
     this.enrollmentRepository = enrollmentRepository;
     this.courseService = courseService;
@@ -113,7 +114,6 @@ public class UserController {
            courseResponseDto.setPercentageFinished(((double) totalFinished /totalLecture)*100);
             courseResponse.add(courseResponseDto);
         }
-
         return  courseResponse;
     }
 
@@ -155,7 +155,7 @@ public class UserController {
         User user = userService.getByUserName(name).orElseThrow(() -> new RuntimeException("User not found"));
 
         Lecture lecture  = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
-        System.out.println("Comment: "+ commentRequestDto.getComment());
+        System.out.println(STR."Comment: \{commentRequestDto.getComment()}");
         Comment comment  = new Comment();
         comment.setComment(commentRequestDto.getComment());
         comment.setUser(user);
@@ -188,6 +188,10 @@ public class UserController {
         String userName = getUserName();
         User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
         Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(()-> new RuntimeException("Lecture not found"));
+        Optional<UserProgress> first = userProgressRepository.findAll().stream().filter(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lectureId)).findFirst();
+        if (first.isPresent()){
+            throw new RuntimeException("User progress already exists");
+        }
         UserProgress userProgress = new UserProgress();
         userProgress.setUser(user);
         userProgress.setLecture(lecture);

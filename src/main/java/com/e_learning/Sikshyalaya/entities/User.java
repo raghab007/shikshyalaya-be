@@ -56,10 +56,17 @@ public class User {
     @JsonIgnore
     private List<UserProgress> userProgresses = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Payment> payments = new ArrayList<>();
+
+
+
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private List<CommentReply> commentReplies = new ArrayList<>();
+
+
     public User (RequestUserDto requestUserDto){
 
         firstName = requestUserDto.getFirstName();
