@@ -200,7 +200,6 @@ public class InstructorController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-
     public String getUserName(){
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }

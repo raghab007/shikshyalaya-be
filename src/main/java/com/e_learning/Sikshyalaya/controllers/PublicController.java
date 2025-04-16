@@ -39,12 +39,17 @@ public class PublicController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RequestUser user){
-       LoginResponse response =  userService.verify(user);
-
+        Optional<User> byUserName = userService.getByUserName(user.getUserName());
+        if (byUserName.isEmpty()){
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setMessage("Username not found");
+            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        }
+        LoginResponse response =  userService.verify(user);
        if (response.getToken()==null)
        {
-           response.setMessage("failed");
-           return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+           response.setMessage("Login password incorrect...");
+           return new ResponseEntity<>(response,HttpStatus.OK);
        }
        return  new ResponseEntity<>(response, HttpStatus.OK);
 
