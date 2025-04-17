@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -22,7 +21,7 @@ public class ViewCourseDto {
     private String courseName;
     private String courseDescription;
     private Integer coursePrice;
-    private  String imageUrl;
+    private String imageUrl;
     private Integer courseDuration;
     private Integer totalEnrollments;
     private String courseCategory;
@@ -30,11 +29,11 @@ public class ViewCourseDto {
     private CourseDifficulty courseDifficulty;
 
 
-    public  ViewCourseDto(Course course){
+    public ViewCourseDto(Course course) {
         this.courseID = course.getCourseID();
         this.courseName = course.getCourseName();
         this.courseDescription = course.getCourseDescription();
-        this.instructorName = course.getInstructor().getFirstName()+course.getInstructor().getLastName();
+        this.instructorName = course.getInstructor().getFirstName() + course.getInstructor().getLastName();
         //this.courseCategory = course.getCategory().getCourseCategoryName();
         this.imageUrl = course.getImageUrl();
         this.coursePrice = course.getCoursePrice();

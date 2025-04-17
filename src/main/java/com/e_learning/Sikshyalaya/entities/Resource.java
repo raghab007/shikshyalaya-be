@@ -16,7 +16,7 @@ public class Resource {
     private Integer resourceId;
     private String resourceName;
     private String resourceUrl;
-    private  String resourceType;
+    private String resourceType;
     private String resourceDescription;
 
 }

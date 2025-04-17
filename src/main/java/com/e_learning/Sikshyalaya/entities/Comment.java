@@ -31,7 +31,7 @@ public class Comment {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userName")
     @JsonBackReference
-    private  User user;
+    private User user;
 
     private Date date;
 

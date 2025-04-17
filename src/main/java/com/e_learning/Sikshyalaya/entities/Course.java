@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Course {
     private String courseName;
     private String courseDescription;
     private Integer coursePrice;
-    private  String imageUrl;
+    private String imageUrl;
     private Integer courseDuration;
     @OneToMany(mappedBy = "course")
     @JsonManagedReference
@@ -36,11 +37,11 @@ public class Course {
     @ManyToOne()
     @JoinColumn(name = "category_id")
     @JsonBackReference
-    private  CourseCategory category;
+    private CourseCategory category;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private  List<Section> sections = new ArrayList<>();
+    private List<Section> sections = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -54,7 +55,8 @@ public class Course {
     @OneToMany(mappedBy = "course")
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();
-    public  Course(RequestCourseDto courseDto){
+
+    public Course(RequestCourseDto courseDto) {
         courseName = courseDto.getCourseName();
         courseDescription = courseDto.getCourseDescription();
         coursePrice = courseDto.getCoursePrice();

@@ -23,10 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-   private UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
 
     @Autowired
-   private JwtFilter jwtFilter;
+    private JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .and()
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/login", "/","signup","/courses","/course/**","/upload_video","/testAPI","/course","/raghab","/messages/**").permitAll()
+                        .requestMatchers("/login", "/", "signup", "/courses", "/course/**", "/upload_video", "/testAPI", "/course", "/raghab", "/messages/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/videos/**").permitAll()
                         .requestMatchers("/comment/**").authenticated()
@@ -49,7 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/payment").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtFilter,  UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

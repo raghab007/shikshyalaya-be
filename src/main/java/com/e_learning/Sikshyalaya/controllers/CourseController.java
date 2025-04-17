@@ -23,17 +23,18 @@ import java.util.Map;
 @RestController
 public class CourseController {
 
-   private final CourseService courseService;
+    private final CourseService courseService;
 
-   private  final SectionService sectionService;
+    private final SectionService sectionService;
 
-   private  final CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    public  CourseController(CourseService courseService, SectionService sectionService, CategoryRepository categoryRepository){
+    public CourseController(CourseService courseService, SectionService sectionService, CategoryRepository categoryRepository) {
         this.courseService = courseService;
         this.sectionService = sectionService;
         this.categoryRepository = categoryRepository;
     }
+
     @GetMapping("/courses")
     public ResponseEntity<Map<String, Object>> getAllCourses(
             @RequestParam(defaultValue = "1") int page,
@@ -51,7 +52,7 @@ public class CourseController {
         for (Course course : paginatedCourses) {
             String imageString = "/images/course/" + course.getImageUrl();
             course.setImageUrl(imageString);
-           course.setInstructor( course.getInstructor());
+            course.setInstructor(course.getInstructor());
         }
         List<ViewCourseDto> responseCourses = paginatedCourses.stream().map(course -> new ViewCourseDto(course)).toList();
 
@@ -68,7 +69,7 @@ public class CourseController {
     }
 
     @GetMapping("/course/{courseID}")
-    public ResponseEntity<?> getCourseById(@PathVariable int courseID){
+    public ResponseEntity<?> getCourseById(@PathVariable int courseID) {
         Course course = courseService.findById(courseID);
         List<Section> sections = sectionService.findSectionsByCourse(course.getCourseID());
         course.setSections(sections);
@@ -77,8 +78,8 @@ public class CourseController {
     }
 
     @GetMapping("/course/course_category")
-    public List<CourseCategory> getAllCourseCategories(){
+    public List<CourseCategory> getAllCourseCategories() {
         List<CourseCategory> all = categoryRepository.findAll();
-        return  all;
+        return all;
     }
 }

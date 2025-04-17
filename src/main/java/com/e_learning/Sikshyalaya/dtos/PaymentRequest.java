@@ -87,12 +87,12 @@ public class PaymentRequest {
             this.name = name;
         }
 
-        public void setoken(String token){
+        public void setoken(String token) {
             this.token = token;
         }
 
-        public String getToken(){
-           return this.token;
+        public String getToken() {
+            return this.token;
         }
 
         public String getEmail() {

@@ -11,9 +11,12 @@ import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +26,7 @@ import java.util.stream.Stream;
 @Service
 public class CourseService implements ICourseService {
     @Autowired
-    private final   CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
 
     @Autowired
     EnrollmentRepository enrollmentRepository;
@@ -37,13 +40,14 @@ public class CourseService implements ICourseService {
 
     StorageUtil storageUtil;
 
-    public CourseService(CourseRepository courseRepository, StorageUtil storageUtil){
+    public CourseService(CourseRepository courseRepository, StorageUtil storageUtil) {
         this.courseRepository = courseRepository;
         this.storageUtil = storageUtil;
     }
 
     public void saveCourse(Course course, MultipartFile imageFile) throws IOException {
-        File directory = new File(Constants.CourseImagePath).getAbsoluteFile();
+        String userHome = System.getProperty("user.home") + File.separator + "Desktop";
+        File directory = new File(userHome, "shikshyalaya/course/images");
         // Create directory if it doesn't exist
         if (!directory.exists()) {
             System.out.println(directory.mkdirs());
@@ -52,7 +56,7 @@ public class CourseService implements ICourseService {
             throw new IllegalArgumentException("Invalid file or filename");
         }
         // Getting file name
-        String originalFilename = storageUtil.getRandomImageUrl()+storageUtil.getFileExtenstion(imageFile.getOriginalFilename());
+        String originalFilename = storageUtil.getRandomImageUrl() + storageUtil.getFileExtenstion(imageFile.getOriginalFilename());
         File uploadFile = new File(directory, originalFilename);
         byte[] bytes = imageFile.getBytes();
         FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
@@ -78,46 +82,47 @@ public class CourseService implements ICourseService {
     public void saveCourse(Course course) {
         courseRepository.save(course);
     }
-    public void deleteById(Integer id){
+
+    public void deleteById(Integer id) {
         courseRepository.deleteById(id);
     }
 
-    public void updateCourseSection(Section section){
-      return;
+    public void updateCourseSection(Section section) {
+        return;
     }
 
-    public Course findById(Integer id){
+    public Course findById(Integer id) {
         Optional<Course> course = courseRepository.findById(id);
         return course.orElse(null);
     }
 
-    public List<Course> findAll(){
+    public List<Course> findAll() {
 
         return courseRepository.findAll();
     }
 
-    public List<Course> getCourseByInstructor(String instructorName){
+    public List<Course> getCourseByInstructor(String instructorName) {
         List<Course> all = courseRepository.findAll();
         return all.stream().filter(course -> course.getInstructor().getUserName().equals(instructorName))
                 .toList();
 
     }
 
-    public long getTotalNumberOfCoursesByInstructor(String instructorName){
+    public long getTotalNumberOfCoursesByInstructor(String instructorName) {
         List<Course> all = courseRepository.findAll();
-       long  count = all.stream().filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
-       return count;
+        long count = all.stream().filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
+        return count;
     }
 
-    public long getTotalEnrolledStudentsByInstructor(String instructorName){
+    public long getTotalEnrolledStudentsByInstructor(String instructorName) {
         return enrollmentRepository.findAll().stream().map(Enrollment::getCourse).filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
     }
 
 
-    public HashMap<String, Integer> getNumberOfStudentsByCourse(String instructorName){
-        User user = userRepository.findByUserName(instructorName).orElseThrow(()-> new RuntimeException("User not fount"));
+    public HashMap<String, Integer> getNumberOfStudentsByCourse(String instructorName) {
+        User user = userRepository.findByUserName(instructorName).orElseThrow(() -> new RuntimeException("User not fount"));
         List<Course> courseList = user.getCourses();
-        Map<String,Integer> map =  new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
         //courseList.forEach(course -> );
         return null;
     }

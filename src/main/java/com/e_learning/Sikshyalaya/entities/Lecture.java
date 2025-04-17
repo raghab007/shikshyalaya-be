@@ -33,7 +33,7 @@ public class Lecture {
     private Section section;
 
     @OneToMany
-    private  List<VideoFeedback> videoFeedbacks = new ArrayList<>();
+    private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "lecture")

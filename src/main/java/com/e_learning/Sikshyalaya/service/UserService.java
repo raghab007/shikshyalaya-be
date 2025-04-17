@@ -1,4 +1,5 @@
 package com.e_learning.Sikshyalaya.service;
+
 import com.e_learning.Sikshyalaya.dtos.LoginResponse;
 import com.e_learning.Sikshyalaya.dtos.RequestUser;
 import com.e_learning.Sikshyalaya.entities.User;
@@ -21,25 +22,26 @@ import java.util.Optional;
 @Service
 public class UserService implements IUserService {
     @Autowired
-    private   AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
     @Autowired
     private JWTService jwtService;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-   private final UserRepository userRepository;
+    private final UserRepository userRepository;
+
     public UserService(UserRepository userRepository) {
 
         this.userRepository = userRepository;
     }
 
-    public  void saveUser(User user) {
+    public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     public Optional<User> getByUserName(String userName) {
-       return userRepository.findByUserName(userName);
+        return userRepository.findByUserName(userName);
     }
 
     public List<User> findAll() {
@@ -54,16 +56,16 @@ public class UserService implements IUserService {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
             if (authentication.isAuthenticated()) {
-              String token  =  jwtService.generateToken(user.getUserName());
+                String token = jwtService.generateToken(user.getUserName());
                 Optional<User> byUserName = userRepository.findByUserName(user.getUserName());
                 User user1 = byUserName.get();
-                return new LoginResponse(token,user1.getRole(), "success");
+                return new LoginResponse(token, user1.getRole(), "success");
             }
-        }catch (Exception e){
-            System.out.println("exception:"+e);
-            return  new LoginResponse();
+        } catch (Exception e) {
+            System.out.println("exception:" + e);
+            return new LoginResponse();
         }
-      return  null;
+        return null;
     }
 
 }

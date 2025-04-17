@@ -11,16 +11,16 @@ import java.util.UUID;
 @Component
 public class StorageUtil {
 
-    public boolean saveImage(MultipartFile file, String path){
-        if(file.isEmpty()){
+    public boolean saveImage(MultipartFile file, String path) {
+        if (file.isEmpty()) {
             return false;
         }
         String resourcePath = new File(path).getAbsolutePath();
         log.info(resourcePath);
         System.out.println(resourcePath);
         File filePath = new File(resourcePath);
-        if(!filePath.exists()){
-         filePath.mkdirs();
+        if (!filePath.exists()) {
+            filePath.mkdirs();
         }
         try {
             file.transferTo(new File(path + file.getOriginalFilename()));
@@ -32,15 +32,14 @@ public class StorageUtil {
     }
 
 
-    public String getFileExtenstion(String fileName){
+    public String getFileExtenstion(String fileName) {
         int i = fileName.lastIndexOf('.');
-        return  fileName.substring(i);
+        return fileName.substring(i);
     }
 
-    public String getRandomImageUrl(){
+    public String getRandomImageUrl() {
         return UUID.randomUUID().toString();
     }
-
 
 
 }

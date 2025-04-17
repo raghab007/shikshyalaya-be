@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private   Integer enrollmentId;
+    private Integer enrollmentId;
 
     @ManyToOne
     @JsonBackReference

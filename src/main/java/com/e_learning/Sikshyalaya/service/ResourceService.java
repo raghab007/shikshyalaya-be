@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 public class ResourceService {
     ResourceRepository resourceRepository;
 
-    public void addResource(Resource resource){
+    public void addResource(Resource resource) {
         resourceRepository.save(resource);
     }
 }

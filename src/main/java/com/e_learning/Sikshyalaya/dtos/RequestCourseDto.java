@@ -10,11 +10,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @Setter
 public class RequestCourseDto {
-   private String courseName;
-   private String courseDescription;
-   private Integer coursePrice ;
-   private Integer courseDuration;
-   private MultipartFile courseImage;
-   private  Integer categoryId;
-   private CourseDifficulty courseDifficulty;
+    private String courseName;
+    private String courseDescription;
+    private Integer coursePrice;
+    private Integer courseDuration;
+    private MultipartFile courseImage;
+    private Integer categoryId;
+    private CourseDifficulty courseDifficulty;
 }

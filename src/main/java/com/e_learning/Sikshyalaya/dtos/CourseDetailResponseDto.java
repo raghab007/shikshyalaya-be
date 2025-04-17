@@ -19,20 +19,20 @@ public class CourseDetailResponseDto {
     private String courseName;
     private String courseDescription;
     private Integer coursePrice;
-    private  String imageUrl;
+    private String imageUrl;
     private Integer courseDuration;
     private Integer totalEnrollments;
     private String courseCategory;
     private String instructorName;
-    private  Integer totalSections;
+    private Integer totalSections;
     private List<Section> sections;
 
 
-    public  CourseDetailResponseDto(Course course){
+    public CourseDetailResponseDto(Course course) {
         this.courseID = course.getCourseID();
         this.courseName = course.getCourseName();
         this.courseDescription = course.getCourseDescription();
-        this.instructorName = course.getInstructor().getFirstName()+course.getInstructor().getLastName();
+        this.instructorName = course.getInstructor().getFirstName() + course.getInstructor().getLastName();
         //this.courseCategory = course.getCategory().getCourseCategoryName();
         this.imageUrl = course.getImageUrl();
         this.coursePrice = course.getCoursePrice();

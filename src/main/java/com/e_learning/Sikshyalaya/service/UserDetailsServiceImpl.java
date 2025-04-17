@@ -15,16 +15,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository){
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<com.e_learning.Sikshyalaya.entities.User> user = userRepository.findByUserName(username);
         if (user.isPresent()) {
             com.e_learning.Sikshyalaya.entities.User user1 = user.get();
             return User.builder().username(user1.getUserName()).password(user1.getPassword()).roles(user1.getRole()).build();
-        }else {
+        } else {
             throw new UsernameNotFoundException("Username not found");
         }
     }

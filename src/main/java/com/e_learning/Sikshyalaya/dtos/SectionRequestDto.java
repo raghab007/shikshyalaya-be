@@ -12,5 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SectionRequestDto {
     private String name;
-    private  String description;
+    private String description;
 }

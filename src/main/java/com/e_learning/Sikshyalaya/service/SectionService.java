@@ -40,10 +40,10 @@ public class SectionService {
         sectionRepository.save(section);
     }
 
-    public void addResource(Integer sectionId,Resource resource) {
+    public void addResource(Integer sectionId, Resource resource) {
         Resource oldResource = resourceRepository.findById(resource.getResourceId()).orElse(null);
         Section section = sectionRepository.findById(sectionId).orElse(null);
-        if (oldResource == null && section!=null ){
+        if (oldResource == null && section != null) {
 //           section.addResource(resource);
         }
     }
@@ -52,13 +52,13 @@ public class SectionService {
         return sectionRepository.findById(id);
     }
 
-    public  void addLecture(){
+    public void addLecture() {
 
     }
 
-    public  List<Section> findSectionsByCourse(int course){
+    public List<Section> findSectionsByCourse(int course) {
         List<Section> sections = sectionRepository.findAll();
-        return sections.stream().filter(section -> section.getCourse().getCourseID()==course).toList();
+        return sections.stream().filter(section -> section.getCourse().getCourseID() == course).toList();
     }
 
 }

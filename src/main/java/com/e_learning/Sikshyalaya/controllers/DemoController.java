@@ -27,10 +27,11 @@ public class DemoController {
         }
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Object credentials = authentication.getCredentials();
-        return  authentication.getName();
+        return authentication.getName();
     }
+
     @GetMapping("/check")
-    public String check(){
+    public String check() {
         return "Ok";
     }
 }

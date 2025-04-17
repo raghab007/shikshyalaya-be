@@ -19,14 +19,14 @@ public class PaymentConroller {
 
     @Autowired
     RestTemplate restTemplate;
-    
+
     @Autowired
     CourseService courseService;
 
     @GetMapping("/payment/{courseId}")
     public ResponseEntity<?> initiatePayment(@PathVariable Integer courseId) {
         // URL to the API endpoint
-        System.out.println("Course course course+"+courseId);
+        System.out.println("Course course course+" + courseId);
         String url = "https://dev.khalti.com/api/v2/epayment/initiate/";
 
         Course byId = courseService.findById(courseId);
@@ -34,7 +34,7 @@ public class PaymentConroller {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setReturnUrl("http://localhost:5173/payment");
         paymentRequest.setWebsiteUrl("https://example.com/");
-        paymentRequest.setAmount(String.valueOf(byId.getCoursePrice()*100));
+        paymentRequest.setAmount(String.valueOf(byId.getCoursePrice() * 100));
         paymentRequest.setPurchaseOrderId(courseId.toString());
         paymentRequest.setPurchaseOrderName("test");
 
@@ -46,9 +46,9 @@ public class PaymentConroller {
         paymentRequest.setCustomerInfo(customerInfo);
 
         // Set the request headers
-     HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
-        headers.set("Authorization","key ced20f08671f45f7aa2cbf2981a9d618");
+        headers.set("Authorization", "key ced20f08671f45f7aa2cbf2981a9d618");
         //
         // Wrap the paymentRequest object in an HttpEntity
         HttpEntity<PaymentRequest> entity = new HttpEntity<>(paymentRequest, headers);

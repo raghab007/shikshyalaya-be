@@ -8,13 +8,13 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class MessageResponseDto{
+public class MessageResponseDto {
     private Integer courseId;
     private String userName;
     private String message;
     private Date date;
 
-    public MessageResponseDto(Message message){
+    public MessageResponseDto(Message message) {
         this.setMessage(message.getMessage());
         this.setCourseId(message.getCourse().getCourseID());
         this.setUserName(message.getUser().getUserName());

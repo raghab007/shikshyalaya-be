@@ -12,14 +12,14 @@ import java.util.Date;
 
 public class CommentReplyResponseDto {
 
-    private  String userName;
+    private String userName;
 
     private Date replyDate;
 
-    private  String commentReply;
+    private String commentReply;
 
 
-    public  CommentReplyResponseDto(CommentReply commentReply){
+    public CommentReplyResponseDto(CommentReply commentReply) {
         this.replyDate = commentReply.getDate();
         this.userName = commentReply.getUser().getUserName();
         this.commentReply = commentReply.getReply();

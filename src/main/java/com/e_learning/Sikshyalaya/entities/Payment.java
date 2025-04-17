@@ -14,18 +14,13 @@ public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer paymentId;
-
-
     private LocalDateTime dateTime = LocalDateTime.now();
-
-
     @ManyToOne
-    private  User user;
-
+    private User user;
     @ManyToOne
     @JsonBackReference
-    private  Course course;
+    private Course course;
 
-    private  Integer amount;
+    private Integer amount;
 
 }

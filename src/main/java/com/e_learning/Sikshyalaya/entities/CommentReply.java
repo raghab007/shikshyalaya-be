@@ -15,17 +15,17 @@ public class CommentReply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Integer  id;
+    private Integer id;
 
-    private  String reply;
-
-    @ManyToOne
-    @JsonBackReference
-    private  User user;
+    private String reply;
 
     @ManyToOne
     @JsonBackReference
-    private  Comment comment;
+    private User user;
+
+    @ManyToOne
+    @JsonBackReference
+    private Comment comment;
 
     private Date date;
 }

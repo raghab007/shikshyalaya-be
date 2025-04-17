@@ -18,58 +18,60 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Optional;
+
 @RestController
 public class PublicController {
     @Autowired
-   private UserService userService;
+    private UserService userService;
 
     @Autowired
     InstructorService instructorService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody RequestUserDto userRequestDto) {
-       Optional<User> _oldUser_ = userService.getByUserName(userRequestDto.getUserName());
+        Optional<User> _oldUser_ = userService.getByUserName(userRequestDto.getUserName());
         User user = new User(userRequestDto);
-       if (_oldUser_.isEmpty()){
-           userService.saveUser(user);
-           return new ResponseEntity<String>("true",HttpStatus.CREATED);
-       }else {
-           return new ResponseEntity<String>("false",HttpStatus.OK);
-       }
+        if (_oldUser_.isEmpty()) {
+            userService.saveUser(user);
+            return new ResponseEntity<String>("true", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<String>("false", HttpStatus.OK);
+        }
     }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody RequestUser user){
+    public ResponseEntity<?> login(@RequestBody RequestUser user) {
         Optional<User> byUserName = userService.getByUserName(user.getUserName());
-        if (byUserName.isEmpty()){
+        if (byUserName.isEmpty()) {
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setMessage("Username not found");
             return new ResponseEntity<>(loginResponse, HttpStatus.OK);
         }
-        LoginResponse response =  userService.verify(user);
-       if (response.getToken()==null)
-       {
-           response.setMessage("Login password incorrect...");
-           return new ResponseEntity<>(response,HttpStatus.OK);
-       }
-       return  new ResponseEntity<>(response, HttpStatus.OK);
+        LoginResponse response = userService.verify(user);
+        if (response.getToken() == null) {
+            response.setMessage("Login password incorrect...");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
     @GetMapping("/user")
-    public UserResponseDto getUser(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();String username = auth.getName();
+    public UserResponseDto getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
         System.out.println(username);
         System.out.println("Hello -------");
-        Optional< User> optionalUser = userService.getByUserName(username);
+        Optional<User> optionalUser = userService.getByUserName(username);
         User user = optionalUser.get();
         return new UserResponseDto(user);
     }
 
     @GetMapping("/testAPI")
-    public String testAPI(@ModelAttribute TestObject testObject ){
+    public String testAPI(@ModelAttribute TestObject testObject) {
         System.out.println(testObject);
-        if (testObject==null){
-            return  null;
+        if (testObject == null) {
+            return null;
         }
         return testObject.toString();
 
@@ -78,7 +80,7 @@ public class PublicController {
     @GetMapping("/raghab")
     public ResponseEntity<?> test(@RequestParam MultipartFile file) throws IOException {
         String s = instructorService.saveVideo(file);
-       return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

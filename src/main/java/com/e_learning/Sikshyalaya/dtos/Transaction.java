@@ -8,13 +8,13 @@ import lombok.ToString;
 @Setter
 @ToString
 public class Transaction {
-     private  String txnId;
-     private  long amount;
-     private long total_amount;
-     private  String status;
-     private  String mobile;
-     private  String tidx;
-     private  String purchase_order_id;
-     private  String purchase_order_name;
-     private  String transaction_id;
+    private String txnId;
+    private long amount;
+    private long total_amount;
+    private String status;
+    private String mobile;
+    private String tidx;
+    private String purchase_order_id;
+    private String purchase_order_name;
+    private String transaction_id;
 }

@@ -7,9 +7,9 @@ import lombok.Setter;
 @Setter
 public class TestObject {
 
-    private  String firstName;
+    private String firstName;
 
-    private  String lastName;
+    private String lastName;
 
     @Override
     public String toString() {

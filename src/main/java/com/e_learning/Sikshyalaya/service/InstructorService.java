@@ -19,7 +19,7 @@ public class InstructorService {
     @Autowired
     private CourseService courseService;
 
-   @Autowired
+    @Autowired
     private EnrollmentRepository enrollmentRepository;
 
     public String saveVideo(MultipartFile video) throws IOException {
@@ -33,7 +33,7 @@ public class InstructorService {
         return video.getOriginalFilename();
     }
 
-    private  FileOutputStream getFileOutputStream(MultipartFile video, File directory) throws IOException {
+    private FileOutputStream getFileOutputStream(MultipartFile video, File directory) throws IOException {
         if (video == null || video.getOriginalFilename() == null || video.getOriginalFilename().isBlank()) {
             throw new IllegalArgumentException("Invalid file or filename");
         }
@@ -48,18 +48,18 @@ public class InstructorService {
 
     public String saveThumbnail(MultipartFile image) throws IOException {
         File directory = new File("src/main/resources/static/images/thumbnails");
-        if (!directory.exists()){
+        if (!directory.exists()) {
             directory.mkdirs();
         }
 
-        if (image==null || image.getOriginalFilename()==null|| image.getOriginalFilename().isBlank()){
-            throw  new IllegalArgumentException("Invalid file");
+        if (image == null || image.getOriginalFilename() == null || image.getOriginalFilename().isBlank()) {
+            throw new IllegalArgumentException("Invalid file");
         }
 
         String originalFileName = image.getOriginalFilename();
         File uploadFile = new File(directory, originalFileName);
-        byte [] bytes = image.getBytes();
-        FileOutputStream fileOutputStream  = new FileOutputStream(uploadFile);
+        byte[] bytes = image.getBytes();
+        FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
         fileOutputStream.write(bytes);
         fileOutputStream.close();
         return image.getOriginalFilename();
@@ -68,15 +68,15 @@ public class InstructorService {
 
     public String updateCourseImage(MultipartFile image, Integer courseId) throws IOException {
         File file = new File("src/main/resources/static/images/course").getAbsoluteFile();
-        Course course =  courseService.findById(courseId);
-        if (course!=null){
+        Course course = courseService.findById(courseId);
+        if (course != null) {
             File oldCourseImage = new File(file, course.getImageUrl());
             if (oldCourseImage.exists()) {
                 boolean delete = oldCourseImage.delete();
-                if (delete){
+                if (delete) {
                     String filePath = "src/main/resources/static/images/course";
-                    String imageName = getRandomImageUrl()+getFileExtenstion(image.getOriginalFilename());
-                    File uploadFile = new File(filePath,imageName).getAbsoluteFile();
+                    String imageName = getRandomImageUrl() + getFileExtenstion(image.getOriginalFilename());
+                    File uploadFile = new File(filePath, imageName).getAbsoluteFile();
                     image.transferTo(uploadFile);
                     course.setImageUrl(image.getOriginalFilename());
                     courseService.saveCourse(course);
@@ -89,24 +89,24 @@ public class InstructorService {
     }
 
 
-    public Integer totalRevenue(String userName){
+    public Integer totalRevenue(String userName) {
         List<Enrollment> enrollments = enrollmentRepository.findAll();
         enrollments = enrollments.stream().filter(enrollment -> enrollment.getCourse().getInstructor().getUserName().equals(userName)).toList();
         Integer amount = 0;
         for (Enrollment enrollment : enrollments) {
             Course course = enrollment.getCourse();
-            amount =amount+ course.getCoursePrice();
+            amount = amount + course.getCoursePrice();
         }
-        return  amount;
+        return amount;
     }
 
 
-    public String getFileExtenstion(String fileName){
+    public String getFileExtenstion(String fileName) {
         int i = fileName.lastIndexOf('.');
-      return  fileName.substring(i);
+        return fileName.substring(i);
     }
 
-    public String getRandomImageUrl(){
+    public String getRandomImageUrl() {
         return UUID.randomUUID().toString();
     }
 

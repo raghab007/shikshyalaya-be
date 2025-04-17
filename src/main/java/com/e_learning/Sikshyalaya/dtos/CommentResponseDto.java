@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 public class CommentResponseDto {
 
-    private  Integer id;
+    private Integer id;
     private String comment;
 
     private String userName;
@@ -22,7 +22,7 @@ public class CommentResponseDto {
 
     private List<CommentReplyResponseDto> commentReplies;
 
-    public CommentResponseDto(Comment comment){
+    public CommentResponseDto(Comment comment) {
         this.comment = comment.getComment();
         this.userName = comment.getUser().getUserName();
         this.date = comment.getDate();

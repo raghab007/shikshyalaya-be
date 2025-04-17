@@ -18,11 +18,11 @@ import java.util.List;
 public class CourseCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Integer courseCategoryId;
+    private Integer courseCategoryId;
 
     private String courseCategoryName;
 
-    @OneToMany(mappedBy = "category",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private  List<Course> courses = new ArrayList<>();
+    private List<Course> courses = new ArrayList<>();
 }

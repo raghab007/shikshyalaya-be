@@ -11,21 +11,22 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CourseResponseDto {
-    private  Integer courseId;
+    private Integer courseId;
     private String name;
     private String description;
     private String image;
 
-    public  CourseResponseDto(Course course){
+    public CourseResponseDto(Course course) {
         name = course.getCourseName();
         description = course.getCourseDescription();
         image = course.getImageUrl();
         courseId = course.getCourseID();
 
     }
-    private  Integer totalLectures;
 
-    private  Integer totalFinished;
+    private Integer totalLectures;
 
-    private  double percentageFinished;
+    private Integer totalFinished;
+
+    private double percentageFinished;
 }

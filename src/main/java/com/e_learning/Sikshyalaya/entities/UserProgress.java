@@ -13,10 +13,10 @@ public class UserProgress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Integer progressId;
+    private Integer progressId;
 
     @ManyToOne
-    private  User user;
+    private User user;
 
     @ManyToOne
     private Lecture lecture;

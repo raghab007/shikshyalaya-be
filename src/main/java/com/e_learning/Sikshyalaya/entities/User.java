@@ -1,4 +1,5 @@
 package com.e_learning.Sikshyalaya.entities;
+
 import com.e_learning.Sikshyalaya.dtos.RequestUserDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -40,16 +41,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private  List<Message> messages = new ArrayList<>();
-
+    private List<Message> messages = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     @JsonManagedReference
-    private  List<Comment> comments = new ArrayList<>();
-
-
+    private List<Comment> comments = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "user")
@@ -61,13 +59,12 @@ public class User {
     private List<Payment> payments = new ArrayList<>();
 
 
-
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<CommentReply> commentReplies = new ArrayList<>();
 
 
-    public User (RequestUserDto requestUserDto){
+    public User(RequestUserDto requestUserDto) {
 
         firstName = requestUserDto.getFirstName();
         lastName = requestUserDto.getLastName();

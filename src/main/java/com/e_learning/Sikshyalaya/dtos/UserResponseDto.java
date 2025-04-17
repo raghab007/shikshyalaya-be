@@ -9,19 +9,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class UserResponseDto {
-  private  String userName;
-  private String firstName;
-  private String lastName;
-  private String email;
-  private String contactNumber;
-  private String role;
+    private String userName;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String contactNumber;
+    private String role;
 
-  public UserResponseDto(User user){
-    userName = user.getUserName();
-    firstName = user.getFirstName();
-    lastName = user.getLastName();
-    email = user.getEmail();
-    contactNumber = user.getContactNumber();
-    role = user.getRole();
-  }
+    public UserResponseDto(User user) {
+        userName = user.getUserName();
+        firstName = user.getFirstName();
+        lastName = user.getLastName();
+        email = user.getEmail();
+        contactNumber = user.getContactNumber();
+        role = user.getRole();
+    }
 }
