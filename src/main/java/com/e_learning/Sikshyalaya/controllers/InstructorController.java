@@ -4,10 +4,7 @@ import com.e_learning.Sikshyalaya.dtos.*;
 import com.e_learning.Sikshyalaya.entities.*;
 import com.e_learning.Sikshyalaya.repositories.CategoryRepository;
 import com.e_learning.Sikshyalaya.repositories.LectureRepository;
-import com.e_learning.Sikshyalaya.service.CourseService;
-import com.e_learning.Sikshyalaya.service.InstructorService;
-import com.e_learning.Sikshyalaya.service.SectionService;
-import com.e_learning.Sikshyalaya.service.UserService;
+import com.e_learning.Sikshyalaya.service.*;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,14 +29,18 @@ public class InstructorController {
     private final CategoryRepository categoryRepository;
     private final InstructorService instructorService;
     private final LectureRepository lectureRepository;
+    private final CommentService commentService;
 
-    public InstructorController(LectureRepository lectureRepository, CategoryRepository categoryRepository, CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService, InstructorService instructorService) {
+    public InstructorController(LectureRepository lectureRepository, CategoryRepository categoryRepository, CourseService courseService, UserService userService, StorageUtil storageUtil,
+                                SectionService sectionService,
+                                InstructorService instructorService, CommentService commentService) {
         this.courseService = courseService;
         this.userService = userService;
         this.sectionService = sectionService;
         this.categoryRepository = categoryRepository;
         this.instructorService = instructorService;
         this.lectureRepository = lectureRepository;
+        this.commentService = commentService;
     }
 
     @PostMapping("/course")
@@ -262,6 +263,14 @@ public class InstructorController {
             log.error("Error updating course", e);
             return new ResponseEntity<>("Error updating course: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+    @GetMapping("/comments")
+    public ResponseEntity<List<CommentDTO>> getComments(
+            @RequestParam(required = false) String courseName) {
+        List<CommentDTO> comments = commentService.getCommentsForInstructorCourses(courseName);
+        return ResponseEntity.ok(comments);
     }
 
 //    @PatchMapping("/course/{courseId}/image")
