@@ -78,7 +78,7 @@ public class InstructorController {
     }
 
     @PostMapping("/course/{courseId}/section")
-    public void addSection(@RequestBody SectionRequestDto sectionRequestDto, @PathVariable Integer courseId) throws IOException {
+    public ResponseEntity<?> addSection(@RequestBody SectionRequestDto sectionRequestDto, @PathVariable Integer courseId) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Course course = courseService.findById(courseId);
         Section section = new Section();
@@ -86,6 +86,17 @@ public class InstructorController {
         section.setDescription(sectionRequestDto.getDescription());
         section.setCourse(course);
         sectionService.add(section);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/course/{courseId}")
+    public ResponseEntity<?> deleteCourseById (@PathVariable Integer courseId){
+        String userName = getUserName();
+        User byUserName = userService.getByUserName(userName).orElseThrow(()-> new RuntimeException("User not found"));
+        Course courseNotFound = byUserName.getCourses().stream().filter(course -> course.getCourseID().equals(courseId)).findFirst().orElseThrow(() -> new RuntimeException("Course not found"));
+        courseService.deleteById(courseId);
+        return  new ResponseEntity<>(HttpStatus.OK);
+
     }
 
     @PostMapping("/course/section/{sectionId}/lecture")
@@ -119,10 +130,7 @@ public class InstructorController {
         return lectures;
     }
 
-    @DeleteMapping("/course")
-    public void deleteCourse(Integer courseId) {
-        courseService.deleteById(courseId);
-    }
+
 
     @PutMapping("/course/updatedetails")
     public void updateCourseDetails(Course course) {
@@ -202,7 +210,6 @@ public class InstructorController {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
-    // ... existing fields and methods ...
 
     @PutMapping("/course/{courseId}")
     public ResponseEntity<?> updateCourse(@PathVariable Integer courseId, @RequestBody CourseUpdateDto courseUpdateDto) {

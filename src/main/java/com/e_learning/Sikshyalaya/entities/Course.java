@@ -28,7 +28,7 @@ public class Course {
     private Integer coursePrice;
     private String imageUrl;
     private Integer courseDuration;
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public class Course {
     @JsonManagedReference
     private List<Section> sections = new ArrayList<>();
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Message> messages;
 
@@ -52,7 +52,7 @@ public class Course {
     private User instructor;
 
 
-    @OneToMany(mappedBy = "course")
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();
 

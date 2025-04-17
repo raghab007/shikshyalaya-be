@@ -23,7 +23,8 @@ public class InstructorService {
     private EnrollmentRepository enrollmentRepository;
 
     public String saveVideo(MultipartFile video) throws IOException {
-        File directory = new File("src/main/resources/static/videos/course").getAbsoluteFile();
+        String userHome = System.getProperty("user.home") + File.separator + "Desktop";
+        File directory = new File(userHome, "shikshyalaya/course/videos");
         // Create directory if it doesn't exist
         if (!directory.exists()) {
             System.out.println(directory.mkdirs());
@@ -47,7 +48,8 @@ public class InstructorService {
     }
 
     public String saveThumbnail(MultipartFile image) throws IOException {
-        File directory = new File("src/main/resources/static/images/thumbnails");
+        String userHome = System.getProperty("user.home") + File.separator + "Desktop";
+        File directory = new File(userHome, "shikshyalaya/course/thumbnails");
         if (!directory.exists()) {
             directory.mkdirs();
         }
@@ -67,14 +69,15 @@ public class InstructorService {
 
 
     public String updateCourseImage(MultipartFile image, Integer courseId) throws IOException {
-        File file = new File("src/main/resources/static/images/course").getAbsoluteFile();
+        String userHome = System.getProperty("user.home") + File.separator + "Desktop";
+        File directory = new File(userHome, "shikshyalaya/course/images");
         Course course = courseService.findById(courseId);
         if (course != null) {
-            File oldCourseImage = new File(file, course.getImageUrl());
+            File oldCourseImage = new File(directory, course.getImageUrl());
             if (oldCourseImage.exists()) {
                 boolean delete = oldCourseImage.delete();
                 if (delete) {
-                    String filePath = "src/main/resources/static/images/course";
+                    String filePath = "shikshyalaya/course/images";
                     String imageName = getRandomImageUrl() + getFileExtenstion(image.getOriginalFilename());
                     File uploadFile = new File(filePath, imageName).getAbsoluteFile();
                     image.transferTo(uploadFile);
@@ -99,7 +102,6 @@ public class InstructorService {
         }
         return amount;
     }
-
 
     public String getFileExtenstion(String fileName) {
         int i = fileName.lastIndexOf('.');

@@ -21,4 +21,18 @@ public interface CourseRepository extends JpaRepository<Course,Integer> {
     // Count total courses
     @Query(value = "SELECT COUNT(*) FROM course", nativeQuery = true)
     int countTotalCourses();
+
+    @Query(value = "SELECT * FROM course WHERE " +
+            "LOWER(course_name) LIKE LOWER(CONCAT('%', :query, '%')) " +
+            "ORDER BY courseid LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Course> searchCoursesByNamePaginated(
+            @Param("query") String query,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
+
+    // Count search results by name only
+    @Query(value = "SELECT COUNT(*) FROM course WHERE " +
+            "LOWER(course_name) LIKE LOWER(CONCAT('%', :query, '%'))",
+            nativeQuery = true)
+    int countSearchResultsByName(@Param("query") String query);
 }

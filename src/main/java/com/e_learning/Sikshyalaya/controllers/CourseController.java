@@ -50,7 +50,7 @@ public class CourseController {
 
         // Update image URLs for the paginated courses
         for (Course course : paginatedCourses) {
-            String imageString = "/images/course/" + course.getImageUrl();
+            String imageString = course.getImageUrl();
             course.setImageUrl(imageString);
             course.setInstructor(course.getInstructor());
         }
@@ -81,5 +81,42 @@ public class CourseController {
     public List<CourseCategory> getAllCourseCategories() {
         List<CourseCategory> all = categoryRepository.findAll();
         return all;
+    }
+
+
+    @GetMapping("/courses/search")
+    public ResponseEntity<Map<String, Object>> searchCourses(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int limit) {
+
+        // Calculate offset based on page and limit
+        int offset = (page - 1) * limit;
+
+        // Fetch paginated search results
+        List<Course> searchResults = courseService.searchCourses(query, offset, limit);
+
+        // Update image URLs and instructor for the courses
+        for (Course course : searchResults) {
+            String imageString = course.getImageUrl();
+            course.setImageUrl(imageString);
+            course.setInstructor(course.getInstructor());
+        }
+
+        List<ViewCourseDto> responseCourses = searchResults.stream()
+                .map(ViewCourseDto::new)
+                .toList();
+
+        // Get the total number of search results for pagination
+        int totalResults = courseService.countSearchResults(query);
+        int totalPages = (int) Math.ceil((double) totalResults / limit);
+
+        // Prepare the response
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses", responseCourses);
+        response.put("totalPages", totalPages);
+        response.put("totalResults", totalResults);
+
+        return ResponseEntity.ok(response);
     }
 }

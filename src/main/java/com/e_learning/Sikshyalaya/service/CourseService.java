@@ -126,6 +126,16 @@ public class CourseService implements ICourseService {
         //courseList.forEach(course -> );
         return null;
     }
+
+
+    // New search methods
+    public List<Course> searchCourses(String query, int offset, int limit) {
+        return courseRepository.searchCoursesByNamePaginated(query, offset, limit);
+    }
+
+    public int countSearchResults(String query) {
+        return courseRepository.countSearchResultsByName(query);
+    }
 }
 
 
