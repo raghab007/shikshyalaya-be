@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.repositories;
 
 import com.e_learning.Sikshyalaya.entities.Course;
+import com.e_learning.Sikshyalaya.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,4 +36,7 @@ public interface CourseRepository extends JpaRepository<Course,Integer> {
             "LOWER(course_name) LIKE LOWER(CONCAT('%', :query, '%'))",
             nativeQuery = true)
     int countSearchResultsByName(@Param("query") String query);
+
+    List<Course> findByInstructor(User instructor);
+
 }

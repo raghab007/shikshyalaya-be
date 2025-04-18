@@ -18,10 +18,12 @@ public class CommentReplyResponseDto {
 
     private String commentReply;
 
+    private String role;
 
     public CommentReplyResponseDto(CommentReply commentReply) {
         this.replyDate = commentReply.getDate();
         this.userName = commentReply.getUser().getUserName();
         this.commentReply = commentReply.getReply();
+        this.role = commentReply.getUser().getRole();
     }
 }

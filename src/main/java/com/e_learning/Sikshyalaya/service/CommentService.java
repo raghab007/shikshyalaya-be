@@ -42,7 +42,6 @@ public class CommentService {
         } else {
             comments = commentRepository.findAllByInstructor(username);
         }
-
         return comments.stream()
                 .map(this::convertToCommentDTO)
                 .collect(Collectors.toList());

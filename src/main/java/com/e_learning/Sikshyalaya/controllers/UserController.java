@@ -181,7 +181,6 @@ public class UserController {
             commentResponseDtos.add(commentResponseDto);
 
         }
-
         return commentResponseDtos;
     }
 

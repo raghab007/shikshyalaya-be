@@ -273,6 +273,29 @@ public class InstructorController {
         return ResponseEntity.ok(comments);
     }
 
+
+     @PostMapping("/{commentId}/replies")
+    public ResponseEntity<CommentReplyDTO> addReplyToComment(
+            @PathVariable Integer commentId,
+            @RequestBody CommentReplyDTO replyDTO) {
+        CommentReplyDTO savedReply = commentService.addReplyToComment(commentId, replyDTO);
+        return ResponseEntity.ok(savedReply);
+    }
+
+    @GetMapping("/courses/chart-data")
+    public ResponseEntity<List<CourseChartDataDto>> getCourseChartData() {
+        String userName = getUserName();
+        List<CourseChartDataDto> chartData = courseService.getCourseChartData(userName);
+        return new ResponseEntity<>(chartData, HttpStatus.OK);
+    }
+
+    @GetMapping("/courses/revenue")
+    public ResponseEntity<Integer> getTotalRevenue() {
+        String userName = getUserName();
+        Integer totalRevenue = courseService.getTotalRevenue(userName);
+        return new ResponseEntity<>(totalRevenue, HttpStatus.OK);
+    }
+
 //    @PatchMapping("/course/{courseId}/image")
 //    public ResponseEntity<?> updateCourseImage(
 //            @PathVariable Integer courseId,

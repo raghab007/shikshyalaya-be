@@ -22,10 +22,13 @@ public class CommentResponseDto {
 
     private List<CommentReplyResponseDto> commentReplies;
 
+    private  String role;
+
     public CommentResponseDto(Comment comment) {
         this.comment = comment.getComment();
         this.userName = comment.getUser().getUserName();
         this.date = comment.getDate();
         this.id = comment.getCommentId();
+        this.role = comment.getUser().getRole();
     }
 }

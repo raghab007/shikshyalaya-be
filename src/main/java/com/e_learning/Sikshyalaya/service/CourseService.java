@@ -1,5 +1,6 @@
 package com.e_learning.Sikshyalaya.service;
 
+import com.e_learning.Sikshyalaya.dtos.CourseChartDataDto;
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Enrollment;
 import com.e_learning.Sikshyalaya.entities.Section;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -38,11 +40,16 @@ public class CourseService implements ICourseService {
 
     private UserRepository userRepository;
 
-    StorageUtil storageUtil;
+    private  StorageUtil storageUtil;
 
-    public CourseService(CourseRepository courseRepository, StorageUtil storageUtil) {
+    private  UserService userService;
+
+
+
+    public CourseService(CourseRepository courseRepository, StorageUtil storageUtil, UserService userService) {
         this.courseRepository = courseRepository;
         this.storageUtil = storageUtil;
+        this.userService = userService;
     }
 
     public void saveCourse(Course course, MultipartFile imageFile) throws IOException {
@@ -135,6 +142,31 @@ public class CourseService implements ICourseService {
 
     public int countSearchResults(String query) {
         return courseRepository.countSearchResultsByName(query);
+    }
+
+
+    public  List<CourseChartDataDto> getCourseChartData(String instructorUsername) {
+        User instructor = userService.getByUserName(instructorUsername)
+                .orElseThrow(() -> new RuntimeException("Instructor not found"));
+
+        List<Course> courses = courseRepository.findByInstructor(instructor);
+
+        return courses.stream()
+                .map(course -> new CourseChartDataDto(
+                        course.getCourseName(),
+                        course.getEnrollments().size(),
+                        course.getCoursePrice()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public Integer getTotalRevenue(String instructorUsername) {
+        User instructor = userService.getByUserName(instructorUsername)
+                .orElseThrow(() -> new RuntimeException("Instructor not found"));
+
+        return courseRepository.findByInstructor(instructor).stream()
+                .mapToInt(course -> course.getCoursePrice() * course.getEnrollments().size())
+                .sum();
     }
 }
 
