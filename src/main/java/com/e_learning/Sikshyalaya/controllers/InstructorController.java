@@ -31,9 +31,7 @@ public class InstructorController {
     private final LectureRepository lectureRepository;
     private final CommentService commentService;
 
-    public InstructorController(LectureRepository lectureRepository, CategoryRepository categoryRepository, CourseService courseService, UserService userService, StorageUtil storageUtil,
-                                SectionService sectionService,
-                                InstructorService instructorService, CommentService commentService) {
+    public InstructorController(LectureRepository lectureRepository, CategoryRepository categoryRepository, CourseService courseService, UserService userService, StorageUtil storageUtil, SectionService sectionService, InstructorService instructorService, CommentService commentService) {
         this.courseService = courseService;
         this.userService = userService;
         this.sectionService = sectionService;
@@ -91,12 +89,12 @@ public class InstructorController {
     }
 
     @DeleteMapping("/course/{courseId}")
-    public ResponseEntity<?> deleteCourseById (@PathVariable Integer courseId){
+    public ResponseEntity<?> deleteCourseById(@PathVariable Integer courseId) {
         String userName = getUserName();
-        User byUserName = userService.getByUserName(userName).orElseThrow(()-> new RuntimeException("User not found"));
+        User byUserName = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
         Course courseNotFound = byUserName.getCourses().stream().filter(course -> course.getCourseID().equals(courseId)).findFirst().orElseThrow(() -> new RuntimeException("Course not found"));
         courseService.deleteById(courseId);
-        return  new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
 
     }
 
@@ -130,7 +128,6 @@ public class InstructorController {
         System.out.println(lectures);
         return lectures;
     }
-
 
 
     @PutMapping("/course/updatedetails")
@@ -267,17 +264,14 @@ public class InstructorController {
 
 
     @GetMapping("/comments")
-    public ResponseEntity<List<CommentDTO>> getComments(
-            @RequestParam(required = false) String courseName) {
+    public ResponseEntity<List<CommentDTO>> getComments(@RequestParam(required = false) String courseName) {
         List<CommentDTO> comments = commentService.getCommentsForInstructorCourses(courseName);
         return ResponseEntity.ok(comments);
     }
 
 
-     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<CommentReplyDTO> addReplyToComment(
-            @PathVariable Integer commentId,
-            @RequestBody CommentReplyDTO replyDTO) {
+    @PostMapping("/{commentId}/replies")
+    public ResponseEntity<CommentReplyDTO> addReplyToComment(@PathVariable Integer commentId, @RequestBody CommentReplyDTO replyDTO) {
         CommentReplyDTO savedReply = commentService.addReplyToComment(commentId, replyDTO);
         return ResponseEntity.ok(savedReply);
     }
@@ -340,5 +334,15 @@ public class InstructorController {
 //    }
 //
 //
+
+    @GetMapping("/enrollments")
+    public List<EnrollmentResponseDto> getAllStudentEnrollmentsByInstructor() {
+        String instructorUserName = getUserName();
+        List<Enrollment> allStudentEnrollmentsByInstructor = instructorService.getAllStudentEnrollmentsByInstructor(instructorUserName);
+        List<EnrollmentResponseDto> list = allStudentEnrollmentsByInstructor.stream().map(enrollment -> new EnrollmentResponseDto(enrollment)).toList();
+        return list;
+
+
+    }
 
 }

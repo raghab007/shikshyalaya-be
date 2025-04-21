@@ -112,5 +112,9 @@ public class InstructorService {
         return UUID.randomUUID().toString();
     }
 
+    public List<Enrollment> getAllStudentEnrollmentsByInstructor(String instructorUserName) {
+        return enrollmentRepository.findAllByInstructor(instructorUserName);
+    }
+
 
 }
