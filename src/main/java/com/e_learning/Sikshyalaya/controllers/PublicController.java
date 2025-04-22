@@ -42,6 +42,11 @@ public class PublicController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RequestUser user) {
         Optional<User> byUserName = userService.getByUserName(user.getUserName());
+        if (byUserName.get().isBlocked()){
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.setMessage("You have been blocked by the admin!");
+            return new ResponseEntity<>(loginResponse,HttpStatus.OK);
+        }
         if (byUserName.isEmpty()) {
             LoginResponse loginResponse = new LoginResponse();
             loginResponse.setMessage("Username not found");
@@ -52,6 +57,7 @@ public class PublicController {
             response.setMessage("Login password incorrect...");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }

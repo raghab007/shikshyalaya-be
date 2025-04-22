@@ -15,6 +15,7 @@ public class UserResponseDto {
     private String email;
     private String contactNumber;
     private String role;
+    private boolean isBlocked;
 
     public UserResponseDto(User user) {
         userName = user.getUserName();
@@ -23,5 +24,6 @@ public class UserResponseDto {
         email = user.getEmail();
         contactNumber = user.getContactNumber();
         role = user.getRole();
+        this.isBlocked  = user.isBlocked();
     }
 }
