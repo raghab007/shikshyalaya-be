@@ -8,6 +8,7 @@ import com.e_learning.Sikshyalaya.service.CourseService;
 import com.e_learning.Sikshyalaya.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,10 +32,10 @@ public class AdminController {
         return courseService.findAll().stream().map(course -> new CourseResponseDto(course)).toList();
     }
 
-
     @GetMapping("/users")
     public List<UserResponseDto> getAllUsers() {
-        return userService.findAll().stream().filter(user -> user.getRole().equals("USER")).map(user -> new UserResponseDto(user)).toList();
+        return userService.findAll().stream().filter(user -> user.getRole().equals("USER"))
+                .map(user -> new UserResponseDto(user)).toList();
     }
 
     @DeleteMapping("/users/{userName}")
@@ -43,16 +44,14 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userName}")
-    public ResponseEntity<?> updateLoginStatus(@RequestBody  BlockStatusRequest  blockStatusRequest , @PathVariable String userName  ){
+    public ResponseEntity<?> updateLoginStatus(@RequestBody BlockStatusRequest blockStatusRequest,
+            @PathVariable String userName) {
         Optional<User> byUserName = userService.getByUserName(userName);
         User userNotFound = byUserName.orElseThrow(() -> new RuntimeException("User not found"));
         userNotFound.setBlocked(blockStatusRequest.isBlocked());
         userService.saveUser(userNotFound);
-        return  new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-
 
     // Define a DTO to receive the request body
     public static class BlockStatusRequest {
@@ -66,6 +65,5 @@ public class AdminController {
             this.blocked = blocked;
         }
     }
-
 
 }

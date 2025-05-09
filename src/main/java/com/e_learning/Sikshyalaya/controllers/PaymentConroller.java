@@ -26,7 +26,6 @@ public class PaymentConroller {
     @GetMapping("/payment/{courseId}")
     public ResponseEntity<?> initiatePayment(@PathVariable Integer courseId) {
         // URL to the API endpoint
-        System.out.println("Course course course+" + courseId);
         String url = "https://dev.khalti.com/api/v2/epayment/initiate/";
 
         Course byId = courseService.findById(courseId);
@@ -56,6 +55,7 @@ public class PaymentConroller {
         // Send the POST request and capture the response
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
 
+        System.out.println(response);
         // Return the response body
         return response;
     }

@@ -33,19 +33,21 @@ public class PublicController {
         User user = new User(userRequestDto);
         if (_oldUser_.isEmpty()) {
             userService.saveUser(user);
-            return new ResponseEntity<String>("true", HttpStatus.CREATED);
+            return new ResponseEntity<String>("User registered", HttpStatus.OK);
         } else {
-            return new ResponseEntity<String>("false", HttpStatus.OK);
+            return new ResponseEntity<String>("Username already exists", HttpStatus.OK);
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RequestUser user) {
         Optional<User> byUserName = userService.getByUserName(user.getUserName());
-        if (byUserName.get().isBlocked()){
-            LoginResponse loginResponse = new LoginResponse();
-            loginResponse.setMessage("You have been blocked by the admin!");
-            return new ResponseEntity<>(loginResponse,HttpStatus.OK);
+        if (byUserName.isPresent()) {
+            if (byUserName.get().isBlocked()) {
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setMessage("You have been blocked by the admin!");
+                return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+            }
         }
         if (byUserName.isEmpty()) {
             LoginResponse loginResponse = new LoginResponse();

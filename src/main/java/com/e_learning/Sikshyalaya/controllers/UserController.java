@@ -4,8 +4,10 @@ import com.e_learning.Sikshyalaya.dtos.*;
 import com.e_learning.Sikshyalaya.entities.*;
 import com.e_learning.Sikshyalaya.repositories.*;
 import com.e_learning.Sikshyalaya.service.CourseService;
+import com.e_learning.Sikshyalaya.service.EmailService;
 import com.e_learning.Sikshyalaya.service.EnrollmentService;
 import com.e_learning.Sikshyalaya.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 
+@Slf4j
 @RestController
 public class UserController {
 
     private final CourseService courseService;
-
 
     private final UserService userService;
 
@@ -30,21 +32,21 @@ public class UserController {
 
     private final EnrollmentService enrollmentService;
 
-
     private final LectureRepository lectureRepository;
 
     private final CommentRepository commentRepository;
 
     private final UserProgressRepository userProgressRepository;
 
-
     private SectionRepository sectionRepository;
 
     private CommentReplyRepository commentReplyRepository;
-
+    private EmailService emailService;
     @Autowired
     private PaymentRepository paymentRepository;
 
+   // @Autowired
+   // private VideoFeedbackRepository videoFeedbackRepository;
 
     @Autowired
     private MessageRepository messageRepository;
@@ -58,7 +60,8 @@ public class UserController {
             CommentRepository commentRepository,
             UserProgressRepository userProgressRepository,
             SectionRepository sectionRepository,
-            CommentReplyRepository commentReplyRepository) {
+            CommentReplyRepository commentReplyRepository,
+            EmailService emailService) {
         this.userService = userService;
         this.enrollmentRepository = enrollmentRepository;
         this.courseService = courseService;
@@ -68,6 +71,7 @@ public class UserController {
         this.userProgressRepository = userProgressRepository;
         this.sectionRepository = sectionRepository;
         this.commentReplyRepository = commentReplyRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/enrollment/{courseId}")
@@ -93,6 +97,14 @@ public class UserController {
         payment.setUser(user);
         payment.setAmount(course.getCoursePrice());
         paymentRepository.save(payment);
+        // Send enrollment confirmation email
+        try {
+            emailService.sendEnrollmentConfirmation(user.getEmail(), course.getCourseName());
+        } catch (Exception e) {
+            // Log the error but don't fail the enrollment
+            log.error("Failed to send enrollment email", e);
+        }
+
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
@@ -253,5 +265,23 @@ public class UserController {
         commentReplyRepository.save(commentReply);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+//    @PostMapping("/feedback/video/{lectureId}")
+//    public ResponseEntity<?> addVideoFeedback(@PathVariable Integer lectureId, @RequestBody VideoFeedbackRepositoryRequestDto videoFeedbackRequestDto) {
+//        String userName = getUserName();
+//        User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
+//        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
+//
+//        VideoFeedback videoFeedback = new VideoFeedback();
+//        videoFeedback.setFeedback(videoFeedbackRequestDto.getFeedback());
+//        videoFeedback.setVideoUrl(videoFeedbackRequestDto.getVideoUrl());
+//        videoFeedback.setDate(new Date());
+//        videoFeedback.setUser(user);
+//        videoFeedback.setLecture(lecture);
+//
+//        videoFeedbackRepository.save(videoFeedback);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
+
 
 }
