@@ -49,7 +49,7 @@ public class AdminController {
         Optional<User> byUserName = userService.getByUserName(userName);
         User userNotFound = byUserName.orElseThrow(() -> new RuntimeException("User not found"));
         userNotFound.setBlocked(blockStatusRequest.isBlocked());
-        userService.saveUser(userNotFound);
+        userService.updateUser(userNotFound);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
