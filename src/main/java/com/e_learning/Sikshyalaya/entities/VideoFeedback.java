@@ -1,8 +1,17 @@
 package com.e_learning.Sikshyalaya.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
 public class VideoFeedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -10,41 +19,12 @@ public class VideoFeedback {
     private String videoUrl;
 
     @ManyToOne
+    @JsonBackReference
     private Course course;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getVideoUrl() {
-        return videoUrl;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
-    }
-
-    public Course getLecture() {
-        return course;
-    }
-
-    public void setLecture(Course lecture) {
-        this.course = lecture;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }

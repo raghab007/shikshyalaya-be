@@ -29,13 +29,13 @@ public class AdminController {
 
     @GetMapping("/courses")
     public List<CourseResponseDto> getAllCourses() {
-        return courseService.findAll().stream().map(course -> new CourseResponseDto(course)).toList();
+        return courseService.findAll().stream().map(CourseResponseDto::new).toList();
     }
 
     @GetMapping("/users")
     public List<UserResponseDto> getAllUsers() {
         return userService.findAll().stream().filter(user -> user.getRole().equals("USER"))
-                .map(user -> new UserResponseDto(user)).toList();
+                .map(UserResponseDto::new).toList();
     }
 
     @DeleteMapping("/users/{userName}")
@@ -52,7 +52,6 @@ public class AdminController {
         userService.updateUser(userNotFound);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
     // Define a DTO to receive the request body
     public static class BlockStatusRequest {
         private boolean blocked;

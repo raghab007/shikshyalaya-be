@@ -119,4 +119,16 @@ public class CourseController {
 
         return ResponseEntity.ok(response);
     }
+
+
+    @GetMapping("/courses/category/{categoryId}")
+    public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable int categoryId, @RequestParam(defaultValue  ="1") int page, @RequestParam(defaultValue = "6") int limit) {
+        List<ViewCourseDto> coursesByCategory = courseService.getCoursesByCategory(page, limit, categoryId);
+        int totalCoursesByCategory  = courseService.getTotalNumberOfCoursesByCategory(categoryId);
+        int totalPages = (int)Math.ceil((double)totalCoursesByCategory / limit);
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses",coursesByCategory);
+        response.put("totalPages",totalPages);
+        return ResponseEntity.ok(response);
+    }
 }

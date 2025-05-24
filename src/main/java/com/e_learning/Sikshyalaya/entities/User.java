@@ -35,6 +35,7 @@ public class User {
 
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
 
     @OneToMany(mappedBy = "instructor")

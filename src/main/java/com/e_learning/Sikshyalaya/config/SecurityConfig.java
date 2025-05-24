@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/user").authenticated()
                         .requestMatchers("/payment").permitAll()
                         .requestMatchers("/files/**").permitAll()
+                        .requestMatchers("/Users/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

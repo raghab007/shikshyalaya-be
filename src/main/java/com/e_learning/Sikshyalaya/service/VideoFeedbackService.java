@@ -1,12 +1,11 @@
 package com.e_learning.Sikshyalaya.service;
 
 import com.e_learning.Sikshyalaya.dtos.VideoFeedbackDto;
+import com.e_learning.Sikshyalaya.dtos.VideoFeedbackResponseDto;
 import com.e_learning.Sikshyalaya.entities.Course;
-import com.e_learning.Sikshyalaya.entities.Lecture;
 import com.e_learning.Sikshyalaya.entities.User;
 import com.e_learning.Sikshyalaya.entities.VideoFeedback;
 import com.e_learning.Sikshyalaya.repositories.CourseRepository;
-import com.e_learning.Sikshyalaya.repositories.LectureRepository;
 import com.e_learning.Sikshyalaya.repositories.UserRepository;
 import com.e_learning.Sikshyalaya.repositories.VideoFeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -65,9 +66,9 @@ public class VideoFeedbackService   {
 
             // Create and save video feedback
             VideoFeedback videoFeedback = new VideoFeedback();
-            videoFeedback.setVideoUrl(filePath.toString());
+            videoFeedback.setVideoUrl(uniqueFileName);
             videoFeedback.setUser(user);
-            videoFeedback.setLecture(course);
+            videoFeedback.setCourse(course);
 
             return videoFeedbackRepository.save(videoFeedback);
         } catch (IOException e) {
@@ -90,5 +91,15 @@ public class VideoFeedbackService   {
         } catch (IOException e) {
             throw new RuntimeException("Failed to delete video feedback", e);
         }
+    }
+
+    public List<VideoFeedbackResponseDto> getAllVideoFeedbacks() {
+
+        List<VideoFeedbackResponseDto> list= new ArrayList<>();
+         videoFeedbackRepository.findAll().forEach(videoFeedback -> {
+             VideoFeedbackResponseDto videoFeedbackResponseDto = new VideoFeedbackResponseDto(videoFeedback);
+             list.add(videoFeedbackResponseDto);
+         });
+         return list;
     }
 }

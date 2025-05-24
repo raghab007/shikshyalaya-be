@@ -1,6 +1,7 @@
 package com.e_learning.Sikshyalaya.service;
 
 import com.e_learning.Sikshyalaya.dtos.CourseChartDataDto;
+import com.e_learning.Sikshyalaya.dtos.ViewCourseDto;
 import com.e_learning.Sikshyalaya.entities.Course;
 import com.e_learning.Sikshyalaya.entities.Enrollment;
 import com.e_learning.Sikshyalaya.entities.Section;
@@ -40,10 +41,9 @@ public class CourseService implements ICourseService {
 
     private UserRepository userRepository;
 
-    private  StorageUtil storageUtil;
+    private StorageUtil storageUtil;
 
-    private  UserService userService;
-
+    private UserService userService;
 
 
     public CourseService(CourseRepository courseRepository, StorageUtil storageUtil, UserService userService) {
@@ -145,7 +145,7 @@ public class CourseService implements ICourseService {
     }
 
 
-    public  List<CourseChartDataDto> getCourseChartData(String instructorUsername) {
+    public List<CourseChartDataDto> getCourseChartData(String instructorUsername) {
         User instructor = userService.getByUserName(instructorUsername)
                 .orElseThrow(() -> new RuntimeException("Instructor not found"));
 
@@ -167,6 +167,17 @@ public class CourseService implements ICourseService {
         return courseRepository.findByInstructor(instructor).stream()
                 .mapToInt(course -> course.getCoursePrice() * course.getEnrollments().size())
                 .sum();
+    }
+
+    public List<ViewCourseDto> getCoursesByCategory(int page, int limit, int categoryId) {
+        int offset = (page - 1) * limit;
+        List<Course> paginatedCoursesByCategory = courseRepository.findPaginatedCoursesByCategory(categoryId, offset, limit);
+        List<ViewCourseDto> list = paginatedCoursesByCategory.stream().map(course -> new ViewCourseDto(course)).toList();
+        return list;
+    }
+
+    public int getTotalNumberOfCoursesByCategory(int categoryId) {
+        return courseRepository.countByCategoryId(categoryId);
     }
 }
 

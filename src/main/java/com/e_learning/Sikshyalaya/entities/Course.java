@@ -56,6 +56,11 @@ public class Course {
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course")
+    @JsonManagedReference
+    private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
+
+
     public Course(RequestCourseDto courseDto) {
         courseName = courseDto.getCourseName();
         courseDescription = courseDto.getCourseDescription();
