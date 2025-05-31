@@ -11,6 +11,8 @@ import com.e_learning.Sikshyalaya.repositories.*;
 import com.e_learning.Sikshyalaya.utils.Constants;
 import com.e_learning.Sikshyalaya.utils.StorageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +47,6 @@ public class CourseService implements ICourseService {
 
     private UserService userService;
 
-
     public CourseService(CourseRepository courseRepository, StorageUtil storageUtil, UserService userService) {
         this.courseRepository = courseRepository;
         this.storageUtil = storageUtil;
@@ -63,7 +64,8 @@ public class CourseService implements ICourseService {
             throw new IllegalArgumentException("Invalid file or filename");
         }
         // Getting file name
-        String originalFilename = storageUtil.getRandomImageUrl() + storageUtil.getFileExtenstion(imageFile.getOriginalFilename());
+        String originalFilename = storageUtil.getRandomImageUrl()
+                + storageUtil.getFileExtenstion(imageFile.getOriginalFilename());
         File uploadFile = new File(directory, originalFilename);
         byte[] bytes = imageFile.getBytes();
         FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
@@ -73,7 +75,6 @@ public class CourseService implements ICourseService {
         courseRepository.save(course);
 
     }
-
 
     // Fetch paginated courses
     public List<Course> findPaginatedCourses(int offset, int limit) {
@@ -122,18 +123,18 @@ public class CourseService implements ICourseService {
     }
 
     public long getTotalEnrolledStudentsByInstructor(String instructorName) {
-        return enrollmentRepository.findAll().stream().map(Enrollment::getCourse).filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
+        return enrollmentRepository.findAll().stream().map(Enrollment::getCourse)
+                .filter(course -> course.getInstructor().getUserName().equals(instructorName)).count();
     }
-
 
     public HashMap<String, Integer> getNumberOfStudentsByCourse(String instructorName) {
-        User user = userRepository.findByUserName(instructorName).orElseThrow(() -> new RuntimeException("User not fount"));
+        User user = userRepository.findByUserName(instructorName)
+                .orElseThrow(() -> new RuntimeException("User not fount"));
         List<Course> courseList = user.getCourses();
         Map<String, Integer> map = new HashMap<>();
-        //courseList.forEach(course -> );
+        // courseList.forEach(course -> );
         return null;
     }
-
 
     // New search methods
     public List<Course> searchCourses(String query, int offset, int limit) {
@@ -143,7 +144,6 @@ public class CourseService implements ICourseService {
     public int countSearchResults(String query) {
         return courseRepository.countSearchResultsByName(query);
     }
-
 
     public List<CourseChartDataDto> getCourseChartData(String instructorUsername) {
         User instructor = userService.getByUserName(instructorUsername)
@@ -155,8 +155,7 @@ public class CourseService implements ICourseService {
                 .map(course -> new CourseChartDataDto(
                         course.getCourseName(),
                         course.getEnrollments().size(),
-                        course.getCoursePrice()
-                ))
+                        course.getCoursePrice()))
                 .collect(Collectors.toList());
     }
 
@@ -171,26 +170,72 @@ public class CourseService implements ICourseService {
 
     public List<ViewCourseDto> getCoursesByCategory(int page, int limit, int categoryId) {
         int offset = (page - 1) * limit;
-        List<Course> paginatedCoursesByCategory = courseRepository.findPaginatedCoursesByCategory(categoryId, offset, limit);
-        List<ViewCourseDto> list = paginatedCoursesByCategory.stream().map(course -> new ViewCourseDto(course)).toList();
+        List<Course> paginatedCoursesByCategory = courseRepository.findPaginatedCoursesByCategory(categoryId, offset,
+                limit);
+        List<ViewCourseDto> list = paginatedCoursesByCategory.stream().map(course -> new ViewCourseDto(course))
+                .toList();
         return list;
     }
 
     public int getTotalNumberOfCoursesByCategory(int categoryId) {
         return courseRepository.countByCategoryId(categoryId);
     }
+
+    public List<ViewCourseDto> getCoursesByPriceRange(Double min, Double max, int page, int limit) {
+        int offset = (page - 1) * limit;
+        List<Course> courses;
+
+        if (min != null && max != null) {
+            courses = courseRepository.findByCoursePriceBetween(min, max, offset, limit);
+        } else if (min != null) {
+            courses = courseRepository.findByCoursePriceGreaterThanEqual(min, offset, limit);
+        } else if (max != null) {
+            courses = courseRepository.findByCoursePriceLessThanEqual(max, offset, limit);
+        } else {
+            courses = courseRepository.findPaginatedCourses(offset, limit);
+        }
+
+        return courses.stream()
+                .map(ViewCourseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public int getTotalNumberOfCoursesByPriceRange(Double min, Double max) {
+        if (min != null && max != null) {
+            return courseRepository.countByCoursePriceBetween(min, max);
+        } else if (min != null) {
+            return courseRepository.countByCoursePriceGreaterThanEqual(min);
+        } else if (max != null) {
+            return courseRepository.countByCoursePriceLessThanEqual(max);
+        } else {
+            return courseRepository.countTotalCourses();
+        }
+    }
+
+    public List<ViewCourseDto> getCoursesByDifficulty(String difficulty, int page, int limit) {
+        int offset = (page - 1) * limit;
+        List<Course> courses = courseRepository.findByCourseDifficulty(difficulty, offset, limit);
+        return courses.stream()
+                .map(ViewCourseDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public int getTotalNumberOfCoursesByDifficulty(String difficulty) {
+        return courseRepository.countByCourseDifficulty(difficulty);
+    }
+
+    @Override
+    public Page<Course> findAll(Pageable pageable) {
+        return courseRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Course> findByCourseNameContaining(String search, Pageable pageable) {
+        return courseRepository.findByCourseNameContaining(search, pageable);
+    }
+
+    @Override
+    public void deleteCourse(Long courseId) {
+        courseRepository.deleteById(Math.toIntExact(courseId));
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

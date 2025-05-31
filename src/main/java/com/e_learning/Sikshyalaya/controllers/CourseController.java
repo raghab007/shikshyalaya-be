@@ -29,7 +29,8 @@ public class CourseController {
 
     private final CategoryRepository categoryRepository;
 
-    public CourseController(CourseService courseService, SectionService sectionService, CategoryRepository categoryRepository) {
+    public CourseController(CourseService courseService, SectionService sectionService,
+            CategoryRepository categoryRepository) {
         this.courseService = courseService;
         this.sectionService = sectionService;
         this.categoryRepository = categoryRepository;
@@ -54,7 +55,8 @@ public class CourseController {
             course.setImageUrl(imageString);
             course.setInstructor(course.getInstructor());
         }
-        List<ViewCourseDto> responseCourses = paginatedCourses.stream().map(course -> new ViewCourseDto(course)).toList();
+        List<ViewCourseDto> responseCourses = paginatedCourses.stream().map(course -> new ViewCourseDto(course))
+                .toList();
 
         // Get the total number of courses for pagination
         int totalCourses = courseService.getTotalCourses();
@@ -82,7 +84,6 @@ public class CourseController {
         List<CourseCategory> all = categoryRepository.findAll();
         return all;
     }
-
 
     @GetMapping("/courses/search")
     public ResponseEntity<Map<String, Object>> searchCourses(
@@ -120,15 +121,57 @@ public class CourseController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/courses/category/{categoryId}")
-    public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable int categoryId, @RequestParam(defaultValue  ="1") int page, @RequestParam(defaultValue = "6") int limit) {
+    public ResponseEntity<Map<String, Object>> getCoursesByCategory(@PathVariable int categoryId,
+            @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "6") int limit) {
         List<ViewCourseDto> coursesByCategory = courseService.getCoursesByCategory(page, limit, categoryId);
-        int totalCoursesByCategory  = courseService.getTotalNumberOfCoursesByCategory(categoryId);
-        int totalPages = (int)Math.ceil((double)totalCoursesByCategory / limit);
+        int totalCoursesByCategory = courseService.getTotalNumberOfCoursesByCategory(categoryId);
+        int totalPages = (int) Math.ceil((double) totalCoursesByCategory / limit);
         Map<String, Object> response = new HashMap<>();
-        response.put("courses",coursesByCategory);
-        response.put("totalPages",totalPages);
+        response.put("courses", coursesByCategory);
+        response.put("totalPages", totalPages);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/courses/price")
+    public ResponseEntity<Map<String, Object>> getCoursesByPriceRange(
+            @RequestParam(required = false) Double min,
+            @RequestParam(required = false) Double max,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int limit) {
+        List<ViewCourseDto> coursesByPriceRange = courseService.getCoursesByPriceRange(min, max, page, limit);
+        int totalCoursesByPriceRange = courseService.getTotalNumberOfCoursesByPriceRange(min, max);
+        int totalPages = (int) Math.ceil((double) totalCoursesByPriceRange / limit);
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses", coursesByPriceRange);
+        response.put("totalPages", totalPages);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/courses/difficulty/{difficulty}")
+    public ResponseEntity<Map<String, Object>> getCoursesByDifficulty(
+            @PathVariable String difficulty,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "6") int limit) {
+        // Convert frontend difficulty to backend format
+        String backendDifficulty = convertDifficultyToBackend(difficulty);
+
+        List<ViewCourseDto> coursesByDifficulty = courseService.getCoursesByDifficulty(backendDifficulty, page, limit);
+        int totalCoursesByDifficulty = courseService.getTotalNumberOfCoursesByDifficulty(backendDifficulty);
+        int totalPages = (int) Math.ceil((double) totalCoursesByDifficulty / limit);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("courses", coursesByDifficulty);
+        response.put("totalPages", totalPages);
+        return ResponseEntity.ok(response);
+    }
+
+    private String convertDifficultyToBackend(String frontendDifficulty) {
+        return switch (frontendDifficulty.toLowerCase()) {
+            case "beginner" -> "BASIC";
+            case "intermediate" -> "INTERMEDIATE";
+            case "advanced" -> "ADVANCED";
+            default -> frontendDifficulty.toUpperCase();
+        };
     }
 }

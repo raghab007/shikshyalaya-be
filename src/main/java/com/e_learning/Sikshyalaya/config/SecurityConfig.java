@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/payment").permitAll()
                         .requestMatchers("/files/**").permitAll()
                         .requestMatchers("/Users/**").permitAll()
+                        .requestMatchers("/api/rating-reviews").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

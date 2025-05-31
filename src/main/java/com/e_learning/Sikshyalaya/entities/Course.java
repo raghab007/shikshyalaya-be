@@ -51,7 +51,6 @@ public class Course {
     @JsonIgnore
     private User instructor;
 
-
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();
@@ -59,6 +58,9 @@ public class Course {
     @OneToMany(mappedBy = "course")
     @JsonManagedReference
     private List<VideoFeedback> videoFeedbacks = new ArrayList<>();
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<RatingReview> ratingReviews = new ArrayList<>();
 
 
     public Course(RequestCourseDto courseDto) {

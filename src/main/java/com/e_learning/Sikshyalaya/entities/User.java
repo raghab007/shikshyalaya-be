@@ -65,6 +65,10 @@ public class User {
     @JsonManagedReference
     private List<CommentReply> commentReplies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<RatingReview> ratingReviews = new ArrayList<>();
+
 
     public User(RequestUserDto requestUserDto) {
 

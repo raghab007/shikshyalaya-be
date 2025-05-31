@@ -175,9 +175,6 @@ public class InstructorController {
         return new ResponseEntity<>(enrolledUsers, HttpStatus.OK);
     }
 
-    //    @GetMapping("/students/enrolled")
-//    public  ResponseEntity<?> getEnrolledStudentsByInstructor(){
-//    }
     @GetMapping("/course")
     public List<ViewCourseDto> getCoursesByInstructor() {
         String name = getUserName();

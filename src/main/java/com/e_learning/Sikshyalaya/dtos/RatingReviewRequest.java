@@ -12,21 +12,8 @@ import lombok.Setter;
 public class RatingReviewRequest {
     private Integer rating;
     private String review;
-    private String userName;
     private Integer courseId;
 }
 
 
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class RatingReviewResponse {
-    private Long id;
-    private Integer rating;
-    private String review;
-    private String userName;
-    private Integer courseId;
-    private String userFullName;
-}
