@@ -75,6 +75,28 @@ public class RatingReviewService {
         ratingReviewRepository.deleteById(reviewId);
     }
 
+    public double getAverageRatingForCourse(Integer courseId) {
+        List<RatingReview> reviews = ratingReviewRepository.findByCourse_CourseID(courseId);
+        if (reviews.isEmpty()) {
+            return 0.0;
+        }
+        return reviews.stream()
+                .mapToInt(RatingReview::getRating)
+                .average()
+                .orElse(0.0);
+    }
+
+    public double getAverageRating() {
+        List<RatingReview> allReviews = ratingReviewRepository.findAll();
+        if (allReviews.isEmpty()) {
+            return 0.0;
+        }
+        return allReviews.stream()
+                .mapToInt(RatingReview::getRating)
+                .average()
+                .orElse(0.0);
+    }
+
     private RatingReviewResponse convertToResponse(RatingReview ratingReview) {
         return new RatingReviewResponse(
                 ratingReview.getId(),
@@ -85,5 +107,7 @@ public class RatingReviewService {
                 ratingReview.getCourse().getCourseID(),
                 ratingReview.getUser().getFirstName() + " " + ratingReview.getUser().getLastName(),
                 ratingReview.getCreatedAt());
+
     }
+
 }

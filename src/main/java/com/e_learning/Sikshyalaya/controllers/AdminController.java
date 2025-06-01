@@ -135,6 +135,37 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/dashboard/stats")
+    public ResponseEntity<Map<String, Object>> getDashboardStats() {
+        Map<String, Object> stats = new HashMap<>();
+
+        // Get total courses
+        long totalCourses = courseService.getTotalNumberOfCourses();
+        stats.put("totalCourses", totalCourses);
+
+        // Get total students (users with role USER)
+        long totalStudents = userService.findAll().stream()
+                .filter(user -> user.getRole().equals("USER"))
+                .count();
+        stats.put("totalStudents", totalStudents);
+
+        // Get total instructors (users with role INSTRUCTOR)
+        long totalInstructors = userService.findAll().stream()
+                .filter(user -> user.getRole().equals("INSTRUCTOR"))
+                .count();
+        stats.put("totalInstructors", totalInstructors);
+
+        // Get total ratings
+        double averageRating = ratingReviewService.getAverageRating();
+        stats.put("averageRating", averageRating);
+
+        // Get total revenue
+        int totalRevenue = courseService.getTotalRevenue();
+        stats.put("totalRevenue", totalRevenue);
+
+        return ResponseEntity.ok(stats);
+    }
+
     public static class BlockStatusRequest {
         private boolean blocked;
 

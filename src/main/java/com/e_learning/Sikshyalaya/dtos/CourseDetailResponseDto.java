@@ -26,6 +26,7 @@ public class CourseDetailResponseDto {
     private String instructorName;
     private Integer totalSections;
     private List<Section> sections;
+    private String courseDifficulty;
 
 
     public CourseDetailResponseDto(Course course) {
@@ -38,7 +39,8 @@ public class CourseDetailResponseDto {
         this.coursePrice = course.getCoursePrice();
         this.totalEnrollments = course.getEnrollments().size();
         this.totalSections = course.getSections().size();
-        sections = course.getSections();
+        this.sections = course.getSections();
+        this.courseDifficulty = course.getCourseDifficulty().toString();
     }
 
 }

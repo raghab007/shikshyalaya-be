@@ -21,10 +21,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,21 +37,25 @@ public class CourseService implements ICourseService {
     private final CourseRepository courseRepository;
 
     @Autowired
-    EnrollmentRepository enrollmentRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Autowired
     private SectionRepository sectionRepository;
 
     private ResourceRepository resourceRepository;
 
-    private UserRepository userRepository;
+    @Autowired
+    private final UserRepository userRepository;
 
     private StorageUtil storageUtil;
 
     private UserService userService;
 
-    public CourseService(CourseRepository courseRepository, StorageUtil storageUtil, UserService userService) {
+    public CourseService(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository,
+            UserRepository userRepository, StorageUtil storageUtil, UserService userService) {
         this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.userRepository = userRepository;
         this.storageUtil = storageUtil;
         this.userService = userService;
     }
@@ -237,5 +244,38 @@ public class CourseService implements ICourseService {
     @Override
     public void deleteCourse(Long courseId) {
         courseRepository.deleteById(Math.toIntExact(courseId));
+    }
+
+    public List<ViewCourseDto> getCoursesWithEnrollmentStatus(String username) {
+        List<Course> courses = courseRepository.findAll();
+        List<ViewCourseDto> courseDtos = new ArrayList<>();
+
+        // Get user's enrolled courses if username is provided
+        Set<Integer> enrolledCourseIds = new HashSet<>();
+        if (username != null) {
+            enrolledCourseIds = enrollmentRepository.findAll().stream()
+                    .filter(e -> e.getUser().getUserName().equals(username))
+                    .map(e -> e.getCourse().getCourseID())
+                    .collect(Collectors.toSet());
+        }
+
+        // Convert courses to DTOs and set enrollment status
+        for (Course course : courses) {
+            ViewCourseDto dto = new ViewCourseDto(course);
+            dto.setIsEnrolled(enrolledCourseIds.contains(course.getCourseID()));
+            courseDtos.add(dto);
+        }
+
+        return courseDtos;
+    }
+
+    public long getTotalNumberOfCourses() {
+        return courseRepository.count();
+    }
+
+    public int getTotalRevenue() {
+        return courseRepository.findAll().stream()
+                .mapToInt(course -> course.getCoursePrice() * course.getEnrollments().size())
+                .sum();
     }
 }

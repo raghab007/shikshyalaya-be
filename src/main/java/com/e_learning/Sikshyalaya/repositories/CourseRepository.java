@@ -21,11 +21,11 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
         @Query(value = "SELECT * FROM course ORDER BY courseid LIMIT :limit OFFSET :offset", nativeQuery = true)
         List<Course> findPaginatedCourses(@Param("offset") int offset, @Param("limit") int limit);
 
-        @Query(value = "SELECT * FROM course where category_id =:categoryId ORDER BY courseid LIMIT :limit OFFSET :offset ", nativeQuery = true)
+        @Query(value = "SELECT * FROM course WHERE category_id = :categoryId ORDER BY courseid LIMIT :limit OFFSET :offset", nativeQuery = true)
         List<Course> findPaginatedCoursesByCategory(@Param("categoryId") Integer categoryId,
                         @Param("offset") int offset, @Param("limit") int limit);
 
-        @Query(value = "SELECT COUNT(*) FROM course where category_id=:categoryId", nativeQuery = true)
+        @Query(value = "SELECT COUNT(*) FROM course WHERE category_id = :categoryId", nativeQuery = true)
         int countByCategoryId(@Param("categoryId") Integer categoryId);
 
         // Count total courses

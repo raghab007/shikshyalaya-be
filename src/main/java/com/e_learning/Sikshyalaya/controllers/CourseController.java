@@ -37,37 +37,13 @@ public class CourseController {
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<Map<String, Object>> getAllCourses(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int limit) {
-
-        System.out.println("Name:");
-        System.out.println(SecurityContextHolder.getContext().getAuthentication().getName());
-        // Calculate offset based on page and limit
-        int offset = (page - 1) * limit;
-
-        // Fetch paginated courses from the service
-        List<Course> paginatedCourses = courseService.findPaginatedCourses(offset, limit);
-
-        // Update image URLs for the paginated courses
-        for (Course course : paginatedCourses) {
-            String imageString = course.getImageUrl();
-            course.setImageUrl(imageString);
-            course.setInstructor(course.getInstructor());
+    public ResponseEntity<List<ViewCourseDto>> getCourses(@RequestParam(required = false) String username) {
+        try {
+            List<ViewCourseDto> courses = courseService.getCoursesWithEnrollmentStatus(username);
+            return ResponseEntity.ok(courses);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        List<ViewCourseDto> responseCourses = paginatedCourses.stream().map(course -> new ViewCourseDto(course))
-                .toList();
-
-        // Get the total number of courses for pagination
-        int totalCourses = courseService.getTotalCourses();
-        int totalPages = (int) Math.ceil((double) totalCourses / limit);
-
-        // Prepare the response
-        Map<String, Object> response = new HashMap<>();
-        response.put("courses", responseCourses);
-        response.put("totalPages", totalPages);
-
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/course/{courseID}")

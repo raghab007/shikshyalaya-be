@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -40,8 +41,8 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
-    public void updateUser(User user) {
-        userRepository.save(user);
+    public User updateUser(User user) {
+        return userRepository.save(user);
     }
 
     public Optional<User> getByUserName(String userName) {
@@ -58,7 +59,8 @@ public class UserService implements IUserService {
 
     public LoginResponse verify(RequestUser user) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()));
             if (authentication.isAuthenticated()) {
                 String token = jwtService.generateToken(user.getUserName());
                 Optional<User> byUserName = userRepository.findByUserName(user.getUserName());
@@ -70,6 +72,17 @@ public class UserService implements IUserService {
             return new LoginResponse();
         }
         return null;
+    }
+
+    public User updateProfileImage(String username, String imageFileName) {
+        User user = getByUserName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setProfileImage(imageFileName);
+        return userRepository.save(user);
+    }
+
+    public boolean verifyPassword(User user, String currentPassword) {
+        return passwordEncoder.matches(currentPassword, user.getPassword());
     }
 
 }

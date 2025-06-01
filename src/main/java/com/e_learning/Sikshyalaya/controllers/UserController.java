@@ -15,10 +15,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.*;
-
 
 @Slf4j
 @RestController
@@ -45,8 +47,8 @@ public class UserController {
     @Autowired
     private PaymentRepository paymentRepository;
 
-   // @Autowired
-   // private VideoFeedbackRepository videoFeedbackRepository;
+    // @Autowired
+    // private VideoFeedbackRepository videoFeedbackRepository;
 
     @Autowired
     private MessageRepository messageRepository;
@@ -82,8 +84,10 @@ public class UserController {
         Optional<User> byUserName = userService.getByUserName(userName);
         User user = byUserName.orElseThrow(() -> new RuntimeException("User not found"));
         List<Enrollment> enrollments = enrollmentRepository.findAll();
-        Enrollment enrollment1 = enrollments.stream().filter(enrollment ->
-                Objects.equals(enrollment.getCourse().getCourseID(), courseId) && enrollment.getUser().getUserName().equals(userName)).findFirst().orElse(null);
+        Enrollment enrollment1 = enrollments.stream()
+                .filter(enrollment -> Objects.equals(enrollment.getCourse().getCourseID(), courseId)
+                        && enrollment.getUser().getUserName().equals(userName))
+                .findFirst().orElse(null);
         if (enrollment1 != (null)) {
             return new ResponseEntity<>("Course already enrolled", HttpStatus.BAD_REQUEST);
         }
@@ -123,7 +127,9 @@ public class UserController {
                     .sum();
             CourseResponseDto courseResponseDto = new CourseResponseDto(enrollment.getCourse());
             courseResponseDto.setTotalLectures(totalLecture);
-            int totalFinished = userProgressRepository.findAll().stream().filter(userProgress -> userProgress.getLecture().getSection().getCourse().getCourseID().equals(enrollment.getCourse().getCourseID())).toList().size();
+            int totalFinished = userProgressRepository.findAll().stream().filter(userProgress -> userProgress
+                    .getLecture().getSection().getCourse().getCourseID().equals(enrollment.getCourse().getCourseID()))
+                    .toList().size();
             courseResponseDto.setTotalFinished(totalFinished);
             courseResponseDto.setPercentageFinished(((double) totalFinished / totalLecture) * 100);
             courseResponse.add(courseResponseDto);
@@ -140,13 +146,11 @@ public class UserController {
     @GetMapping("/enrollment/courses")
     public List<Course> getEnrolledCourses() {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        return enrollmentRepository.findAll().
-                stream().
-                filter(enrollment -> enrollment.getUser().getUserName().equals(userName))
+        return enrollmentRepository.findAll().stream()
+                .filter(enrollment -> enrollment.getUser().getUserName().equals(userName))
                 .map(Enrollment::getCourse)
                 .toList();
     }
-
 
     @PostMapping("/message/course/{courseId}")
     public String saveMessage(@PathVariable Integer courseId, @RequestBody RequestMessage requestMessage) {
@@ -161,7 +165,6 @@ public class UserController {
         messageRepository.save(message);
         return "Success";
     }
-
 
     @PostMapping("/comment/{lectureId}")
     public ResponseEntity<?> saveComment(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Integer lectureId) {
@@ -183,12 +186,14 @@ public class UserController {
     public List<CommentResponseDto> getComment(@PathVariable Integer lectureId) {
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getByUserName(name).orElseThrow(() -> new RuntimeException("User not found"));
-        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new RuntimeException("Lecture not found"));
         List<Comment> comments = lecture.getComments();
         List<CommentResponseDto> commentResponseDtos = new ArrayList<>();
         for (Comment comment : comments) {
             CommentResponseDto commentResponseDto = new CommentResponseDto(comment);
-            List<CommentReplyResponseDto> list = comment.getCommentReplies().stream().map(commentReply -> new CommentReplyResponseDto(commentReply)).toList();
+            List<CommentReplyResponseDto> list = comment.getCommentReplies().stream()
+                    .map(commentReply -> new CommentReplyResponseDto(commentReply)).toList();
             commentResponseDto.setCommentReplies(list);
             commentResponseDtos.add(commentResponseDto);
 
@@ -196,13 +201,16 @@ public class UserController {
         return commentResponseDtos;
     }
 
-
     @PostMapping("/progress/{lectureId}")
     public ResponseEntity<?> trackProgress(@PathVariable Integer lectureId) {
         String userName = getUserName();
         User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
-        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
-        Optional<UserProgress> first = userProgressRepository.findAll().stream().filter(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lectureId)).findFirst();
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new RuntimeException("Lecture not found"));
+        Optional<UserProgress> first = userProgressRepository.findAll().stream()
+                .filter(userProgress -> userProgress.getUser().getUserName().equals(userName)
+                        && userProgress.getLecture().getId().equals(lectureId))
+                .findFirst();
         if (first.isPresent()) {
             throw new RuntimeException("User progress already exists");
         }
@@ -217,16 +225,18 @@ public class UserController {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
-
     @GetMapping("/sections/{sectionId}/lectures")
     public List<LectureReponseDto> getLectures(@PathVariable Integer sectionId) {
-        Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new RuntimeException("Section not found"));
+        Section section = sectionRepository.findById(sectionId)
+                .orElseThrow(() -> new RuntimeException("Section not found"));
         String userName = getUserName();
         List<UserProgress> userProgresses = userProgressRepository.findAll();
         List<LectureReponseDto> reponseDtoList = new ArrayList<>();
         for (Lecture lecture : section.getLectures()) {
             LectureReponseDto lectureReponseDto = new LectureReponseDto(lecture);
-            boolean isCompleted = userProgresses.stream().anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lecture.getId()));
+            boolean isCompleted = userProgresses.stream()
+                    .anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName)
+                            && userProgress.getLecture().getId().equals(lecture.getId()));
             System.out.println(isCompleted);
             lectureReponseDto.setCompleted(isCompleted);
             reponseDtoList.add(lectureReponseDto);
@@ -239,8 +249,11 @@ public class UserController {
     public ResponseEntity<?> markLectureAsCompleted(@PathVariable Integer lectureId) {
         String userName = getUserName();
         User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
-        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
-        boolean b = userProgressRepository.findAll().stream().anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName) && userProgress.getLecture().getId().equals(lectureId));
+        Lecture lecture = lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new RuntimeException("Lecture not found"));
+        boolean b = userProgressRepository.findAll().stream()
+                .anyMatch(userProgress -> userProgress.getUser().getUserName().equals(userName)
+                        && userProgress.getLecture().getId().equals(lectureId));
         if (b) {
             throw new RuntimeException("User already completed that course");
         }
@@ -253,10 +266,12 @@ public class UserController {
     }
 
     @PostMapping("/comments/{commentId}/reply")
-    public ResponseEntity<?> doCommentReply(@PathVariable Integer commentId, @RequestBody CommentReplyRequestDto commentReplyRequestDto) {
+    public ResponseEntity<?> doCommentReply(@PathVariable Integer commentId,
+            @RequestBody CommentReplyRequestDto commentReplyRequestDto) {
         String userName = getUserName();
         User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("Comment not found"));
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
         CommentReply commentReply = new CommentReply();
         commentReply.setReply(commentReplyRequestDto.getReply());
         commentReply.setDate(new Date());
@@ -266,22 +281,154 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-//    @PostMapping("/feedback/video/{lectureId}")
-//    public ResponseEntity<?> addVideoFeedback(@PathVariable Integer lectureId, @RequestBody VideoFeedbackRepositoryRequestDto videoFeedbackRequestDto) {
-//        String userName = getUserName();
-//        User user = userService.getByUserName(userName).orElseThrow(() -> new RuntimeException("User not found"));
-//        Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new RuntimeException("Lecture not found"));
-//
-//        VideoFeedback videoFeedback = new VideoFeedback();
-//        videoFeedback.setFeedback(videoFeedbackRequestDto.getFeedback());
-//        videoFeedback.setVideoUrl(videoFeedbackRequestDto.getVideoUrl());
-//        videoFeedback.setDate(new Date());
-//        videoFeedback.setUser(user);
-//        videoFeedback.setLecture(lecture);
-//
-//        videoFeedbackRepository.save(videoFeedback);
-//        return new ResponseEntity<>(HttpStatus.OK);
-//    }
+    // @PostMapping("/feedback/video/{lectureId}")
+    // public ResponseEntity<?> addVideoFeedback(@PathVariable Integer lectureId,
+    // @RequestBody VideoFeedbackRepositoryRequestDto videoFeedbackRequestDto) {
+    // String userName = getUserName();
+    // User user = userService.getByUserName(userName).orElseThrow(() -> new
+    // RuntimeException("User not found"));
+    // Lecture lecture = lectureRepository.findById(lectureId).orElseThrow(() -> new
+    // RuntimeException("Lecture not found"));
+    //
+    // VideoFeedback videoFeedback = new VideoFeedback();
+    // videoFeedback.setFeedback(videoFeedbackRequestDto.getFeedback());
+    // videoFeedback.setVideoUrl(videoFeedbackRequestDto.getVideoUrl());
+    // videoFeedback.setDate(new Date());
+    // videoFeedback.setUser(user);
+    // videoFeedback.setLecture(lecture);
+    //
+    // videoFeedbackRepository.save(videoFeedback);
+    // return new ResponseEntity<>(HttpStatus.OK);
+    // }
 
+    @PostMapping("/profile/image")
+    public ResponseEntity<?> updateProfileImage(
+            @RequestParam("image") MultipartFile file,
+            Authentication authentication) {
+        try {
+            // Validate file type
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest().body("Only image files are allowed");
+            }
+
+            // Validate file size (5MB max)
+            if (file.getSize() > 5 * 1024 * 1024) {
+                return ResponseEntity.badRequest().body("File size should be less than 5MB");
+            }
+
+            // Create directory if it doesn't exist
+            String uploadDir = System.getProperty("user.home") + "/Desktop/shikshyalaya/profile/images";
+            File directory = new File(uploadDir);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+
+            // Delete existing profile image if any
+            User currentUser = userService.getByUserName(authentication.getName())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            if (currentUser.getProfileImage() != null) {
+                File existingFile = new File(uploadDir + "/" + currentUser.getProfileImage());
+                if (existingFile.exists()) {
+                    existingFile.delete();
+                }
+            }
+
+            // Generate unique filename
+            String originalFilename = file.getOriginalFilename();
+            String extension = originalFilename != null ? originalFilename.substring(originalFilename.lastIndexOf("."))
+                    : ".jpg";
+            String filename = UUID.randomUUID() + extension;
+
+            // Save the file
+            File destFile = new File(uploadDir + "/" + filename);
+            file.transferTo(destFile);
+
+            // Update user profile with new image filename
+            User updatedUser = userService.updateProfileImage(authentication.getName(), filename);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to upload profile image: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserProfile(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            Optional<User> user = userService.getByUserName(username);
+            if (user.isPresent()) {
+                return ResponseEntity.ok(user.get());
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching user profile: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateUserProfile(
+            @RequestBody UserProfileUpdateDto profileUpdate,
+            Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            User user = userService.getByUserName(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            // Update user fields
+            user.setFirstName(profileUpdate.getFirstName());
+            user.setLastName(profileUpdate.getLastName());
+            user.setEmail(profileUpdate.getEmail());
+            user.setContactNumber(profileUpdate.getContactNumber());
+
+            User updatedUser = userService.updateUser(user);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating profile: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/profile/password")
+    public ResponseEntity<?> updatePassword(
+            @RequestBody PasswordUpdateDto passwordUpdate,
+            Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            User user = userService.getByUserName(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            // Verify current password
+            if (!userService.verifyPassword(user, passwordUpdate.getCurrentPassword())) {
+                return ResponseEntity.badRequest().body("Current password is incorrect");
+            }
+
+            // Update password
+            user.setPassword(passwordUpdate.getNewPassword());
+            userService.saveUser(user);
+
+            return ResponseEntity.ok().body("Password updated successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error updating password: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/profile/transactions")
+    public ResponseEntity<?> getUserTransactions(Authentication authentication) {
+        try {
+            String userName = authentication.getName();
+            User user = userService.getByUserName(userName)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
+            List<Payment> payments = paymentRepository.findByUserOrderByDateTimeDesc(user);
+            return ResponseEntity.ok(payments);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error fetching transactions: " + e.getMessage());
+        }
+    }
 
 }

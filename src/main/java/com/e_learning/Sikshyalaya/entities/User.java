@@ -27,12 +27,11 @@ public class User {
     private String password;
     private String role;
     private String contactNumber;
-    private  boolean isBlocked ;
+    private boolean isBlocked;
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<Enrollment> enrollments = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
@@ -45,12 +44,10 @@ public class User {
     @JsonManagedReference
     private List<Message> messages = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -60,7 +57,6 @@ public class User {
     @JsonIgnore
     private List<Payment> payments = new ArrayList<>();
 
-
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private List<CommentReply> commentReplies = new ArrayList<>();
@@ -69,6 +65,8 @@ public class User {
     @JsonManagedReference
     private List<RatingReview> ratingReviews = new ArrayList<>();
 
+    @Column(name = "profile_image")
+    private String profileImage;
 
     public User(RequestUserDto requestUserDto) {
 

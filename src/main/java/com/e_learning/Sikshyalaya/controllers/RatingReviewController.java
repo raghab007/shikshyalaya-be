@@ -36,9 +36,15 @@ public class RatingReviewController {
         return ResponseEntity.ok(ratingReviewService.hasUserRatedCourse(userName, courseId));
     }
 
+    @GetMapping("/course/{courseId}/average-rating")
+    public ResponseEntity<Double> getAverageRatingForCourse(
+            @PathVariable Integer courseId) {
+        return ResponseEntity.ok(ratingReviewService.getAverageRatingForCourse(courseId));
+    }
 
-//    @GetMapping
-//    public  ResponseEntity<List<RatingReviewResponse>> getAllRatingForEachCourse(){
-//
-//    }
+    // @GetMapping
+    // public ResponseEntity<List<RatingReviewResponse>>
+    // getAllRatingForEachCourse(){
+    //
+    // }
 }
