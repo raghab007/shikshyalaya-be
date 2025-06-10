@@ -5,36 +5,49 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // Add your frontend URL
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Configure course images
-        String courseImagesPath = System.getProperty("user.home") + "/Desktop/shikshyalaya/course/images";
-        registry.addResourceHandler("/files/course/images/**")
-                .addResourceLocations("file:" + courseImagesPath + "/");
-
-        // Configure profile images
-        String profileImagesPath = System.getProperty("user.home") + "/Desktop/shikshyalaya/profile/images";
-        File profileDir = new File(profileImagesPath);
-        if (!profileDir.exists()) {
-            profileDir.mkdirs();
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                                .allowedOrigins("http://localhost:5173")
+                                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                                .allowedHeaders("*")
+                                .allowCredentials(true);
         }
-        registry.addResourceHandler("/files/profile/images/**")
-                .addResourceLocations("file:" + profileImagesPath + "/");
-    }
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+                String userHome = System.getProperty("user.home");
+
+                // Course videos
+                registry.addResourceHandler("/files/course/videos/**")
+                                .addResourceLocations("file:" + userHome + "/Desktop/shikshyalaya/course/videos/")
+                                .setCachePeriod(3600)
+                                .resourceChain(true);
+
+                // Course thumbnails
+                registry.addResourceHandler("/files/course/thumbnails/**")
+                                .addResourceLocations("file:" + userHome + "/Desktop/shikshyalaya/course/thumbnails/")
+                                .setCachePeriod(3600)
+                                .resourceChain(true);
+
+                // Video feedback
+                registry.addResourceHandler("/files/videofeedback/**")
+                                .addResourceLocations("file:" + userHome + "/Desktop/shikshyalaya/videofeedback/")
+                                .setCachePeriod(3600)
+                                .resourceChain(true);
+
+                // Course images
+                registry.addResourceHandler("/files/course/images/**")
+                                .addResourceLocations("file:" + userHome + "/Desktop/shikshyalaya/course/images/")
+                                .setCachePeriod(3600)
+                                .resourceChain(true);
+
+                // Profile images
+                registry.addResourceHandler("/files/profile/images/**")
+                                .addResourceLocations("file:" + userHome + "/Desktop/shikshyalaya/profile/images/")
+                                .setCachePeriod(3600)
+                                .resourceChain(true);
+        }
 }

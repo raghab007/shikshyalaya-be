@@ -29,18 +29,22 @@ public class InstructorService {
         if (!directory.exists()) {
             System.out.println(directory.mkdirs());
         }
-        FileOutputStream fileOutputStream = getFileOutputStream(video, directory);
+
+        // Generate unique filename
+        String originalFilename = video.getOriginalFilename();
+        String extension = getFileExtenstion(originalFilename);
+        String uniqueFileName = UUID.randomUUID().toString() + extension;
+
+        FileOutputStream fileOutputStream = getFileOutputStream(video, directory, uniqueFileName);
         fileOutputStream.close();
-        return video.getOriginalFilename();
+        return uniqueFileName;
     }
 
-    private FileOutputStream getFileOutputStream(MultipartFile video, File directory) throws IOException {
+    private FileOutputStream getFileOutputStream(MultipartFile video, File directory, String fileName) throws IOException {
         if (video == null || video.getOriginalFilename() == null || video.getOriginalFilename().isBlank()) {
             throw new IllegalArgumentException("Invalid file or filename");
         }
-        // Getting file name
-        String originalFilename = video.getOriginalFilename();
-        File uploadFile = new File(directory, originalFilename);
+        File uploadFile = new File(directory, fileName);
         byte[] bytes = video.getBytes();
         FileOutputStream fileOutputStream = new FileOutputStream(uploadFile);
         fileOutputStream.write(bytes);
@@ -67,7 +71,6 @@ public class InstructorService {
         return image.getOriginalFilename();
     }
 
-
     public String updateCourseImage(MultipartFile image, Integer courseId) throws IOException {
         String userHome = System.getProperty("user.home") + File.separator + "Desktop";
         File directory = new File(userHome, "shikshyalaya/course/images");
@@ -84,13 +87,11 @@ public class InstructorService {
                     course.setImageUrl(image.getOriginalFilename());
                     courseService.saveCourse(course);
                     return "Success";
-
                 }
             }
         }
         return "failed";
     }
-
 
     public Integer totalRevenue(String userName) {
         List<Enrollment> enrollments = enrollmentRepository.findAll();
@@ -115,6 +116,4 @@ public class InstructorService {
     public List<Enrollment> getAllStudentEnrollmentsByInstructor(String instructorUserName) {
         return enrollmentRepository.findAllByInstructor(instructorUserName);
     }
-
-
 }
